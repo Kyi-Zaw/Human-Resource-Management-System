@@ -1,0 +1,278 @@
+﻿@page "/"
+@using ApplicationLayer.DTOs
+@using ApplicationLayer.Services
+@using DomainLayer.Entities;
+@using NetcodeHub.Packages.Components.Validations.OnInput;
+@using NetcodeHub.Packages.Components.Toast;
+@using Web.WebComponent;
+@inject IEmployeeService emp
+@inject ToastService toastService
+@inject IJSRuntime JS
+
+<PageTitle>Home</PageTitle>
+
+<div class="row">
+    <div class="col-lg-6">
+        <EditForm Model="employee" OnValidSubmit="Save">
+            <DataAnnotationsValidator />
+            <FloatingText @bind-Value="employee.Name" Label="Fullname" Placeholder="John Doe" class="form-control mb-3" />
+            <ValidationMessage For="()=>employee.Name" />
+
+            <FloatingTextArea @bind-Value="employee.Address" Label="Address" Placeholder="eg. 349(Kha)/Padauk(6) streets/1 wards" class="form-control mb-3" />
+            <ValidationMessage For="()=>employee.Address"/>
+
+            <button class="btn btn-primary mt-3 mb-3" type="submit">Save</button>
+            <button class="btn btn-secondary mt-3 mb-3" @onclick="Cancel">Cancel</button>
+            @* <button class="btn btn-primary mt-5 mb-5" @onclick="ShowAlert">Show Alert</button> *@
+            @* <button class="btn btn-primary mt-5 mb-5" @onclick="DeleteConfirm">Delete</button> *@
+        </EditForm>
+    </div>
+</div>
+
+
+
+
+<Paging TItem="EmployeeDto"
+          Items="Employees"
+          PageSize="5"
+          ShowRowNumber="true"
+          EnableSearch="true"
+          OnEdit="EditEmployee"
+          OnDelete="DeleteEmployee"
+          Columns="GridColumns">
+</Paging>
+
+
+
+@code {
+    EmployeeDto employee = new();
+    string editingId = string.Empty;
+
+
+
+    async Task Save()
+    {
+        if (editingId==string.Empty)
+        {
+            var (flag, message) = await emp.AddAsync(employee);
+            if (!flag)
+            {
+                await JS.InvokeVoidAsync("showAlert", "error", "Failed!", message);
+                return;
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("showAlert", "success", "Saved!", "Your data has been saved.");
+                Employees = await emp.GetAllAsync();
+                employee = new EmployeeDto();
+
+                StateHasChanged(); 
+            }
+        }
+        else
+        {
+            employee.EmployeeID = editingId;
+            var (flag, message) = await emp.UpdateAsync(employee);
+            if (flag)
+            {
+                Employees = await emp.GetAllAsync();
+                employee = new EmployeeDto();
+                editingId = string.Empty;
+                await JS.InvokeVoidAsync("showAlert", "success", "Updated!", "Employee updated successfully.");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("showAlert", "error", "Failed!", message);
+            }
+        }
+
+    }
+    // Delete
+    async Task Delete(string id)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>(
+            "confirmAction",
+            "Are you sure to delete?",
+            "This action cannot be undone!"
+        );
+
+        if (confirmed)
+        {
+            var (flag, message) = await emp.DeleteAsync(id);
+            if (flag)
+            {
+                Employees = await emp.GetAllAsync();
+                await JS.InvokeVoidAsync("showAlert", "success", "Deleted!", "Employee deleted successfully.");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("showAlert", "error", "Failed!", message);
+            }
+        }
+    }
+
+    private void Cancel()
+    {
+        employee = new EmployeeDto();
+        editingId = string.Empty;
+    }
+
+    #region pagination
+
+    private List<EmployeeDto> Employees = new();
+    private List<ColumnDefinition<EmployeeDto>> GridColumns = new()
+    {
+        // new ColumnDefinition<EmployeeDto>
+        // {
+        //     Title = "ID",
+        //     PropertyName = nameof(EmployeeDto.EmployeeID),
+        //     CellTemplate = e => e.EmployeeID
+        // },
+        new ColumnDefinition<EmployeeDto>
+        {
+            Title = "Name",
+            PropertyName = nameof(EmployeeDto.Name),
+            CellTemplate = e => e.Name
+        },
+        new ColumnDefinition<EmployeeDto>
+        {
+            Title = "Address",
+            PropertyName = nameof(EmployeeDto.Address),
+            CellTemplate = e => e.Address
+        }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        Employees = await emp.GetAllAsync();
+    }
+
+    private async Task EditEmployee(EmployeeDto empdto)
+    {
+        var empToEdit = Employees.FirstOrDefault(e => e.EmployeeID == empdto.EmployeeID);
+        if (empToEdit != null)
+        {
+            employee = await emp.GetByIDAsync(empToEdit.EmployeeID!);
+            editingId = empToEdit.EmployeeID!;
+        }
+    }
+
+    private async Task DeleteEmployee(EmployeeDto empDto)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>(
+            "confirmAction",
+            "Are you sure to delete?",
+            "This action cannot be undone!"
+        );
+
+        if (confirmed)
+        {
+            var (flag, message) = await emp.DeleteAsync(empDto.EmployeeID);
+            if (flag)
+            {
+                Employees = await emp.GetAllAsync();
+                await JS.InvokeVoidAsync("showAlert", "success", "Deleted!", "Employee deleted successfully.");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("showAlert", "error", "Failed!", message);
+            }
+        }
+    }
+
+
+    #endregion
+
+
+    #region test
+
+    private async Task ShowAlert()
+    {
+        await JS.InvokeVoidAsync("showAlert", "Saved!", "Your data has been saved.");
+    }
+
+    private async Task DeleteConfirm()
+    {
+        bool confirmed = await JS.InvokeAsync<bool>(
+            "confirmAction",
+            "Are you sure to delete?",
+            "You won't be able to revert this!"
+        );
+
+        if (confirmed)
+        {
+            await JS.InvokeVoidAsync("showAlert","success", "Delete!", "Your data has been Delete.");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("showAlert","error", "Fail!", "Your data has been Calcel.");
+        }
+    }
+
+    #endregion
+
+    #region old pagination
+
+    // private List<EmployeeDto> Employees = new();
+    // private string SearchText { get; set; } = string.Empty;
+    // private string SortColumn { get; set; } = "ID";
+    // private bool SortAscending { get; set; } = true;
+
+    // private int CurrentPage { get; set; } = 1;
+    // private int PageSize { get; set; } = 5;
+
+    // private IEnumerable<EmployeeDto> FilteredEmployees =>
+    //     Employees
+    //         .Where(e => string.IsNullOrEmpty(SearchText)
+    //         || e.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+    //         || e.Address.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+    //         );
+
+    // private IEnumerable<EmployeeDto> SortedEmployees =>
+    //     SortAscending
+    //         ? FilteredEmployees.OrderBy(e => GetPropertyValue(e, SortColumn))
+    //         : FilteredEmployees.OrderByDescending(e => GetPropertyValue(e, SortColumn));
+
+    // private IEnumerable<EmployeeDto> PagedEmployees =>
+    //     SortedEmployees
+    //         .Skip((CurrentPage - 1) * PageSize)
+    //         .Take(PageSize);
+
+    // private int TotalPages => (int)Math.Ceiling(SortedEmployees.Count() / (double)PageSize);
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     Employees = await emp.GetAllAsync();
+
+    // }
+
+
+    // private void ChangePage(int page)
+    // {
+    //     if (page >= 1 && page <= TotalPages)
+    //     {
+    //         CurrentPage = page;
+    //     }
+    // }
+
+    // private void SortBy(string column)
+    // {
+    //     if (SortColumn == column)
+    //     {
+    //         SortAscending = !SortAscending;
+    //     }
+    //     else
+    //     {
+    //         SortColumn = column;
+    //         SortAscending = true;
+    //     }
+    // }
+
+    // private object GetPropertyValue(EmployeeDto emp, string propertyName)
+    // {
+    //     return typeof(EmployeeDto).GetProperty(propertyName)?.GetValue(emp, null);
+    // }
+
+    #endregion
+
+}
