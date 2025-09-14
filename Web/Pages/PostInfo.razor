@@ -24,8 +24,6 @@
 
             <button class="btn btn-primary mt-3 mb-3" type="submit">Save</button>
             <button class="btn btn-secondary mt-3 mb-3" @onclick="Cancel">Cancel</button>
-            @* <button class="btn btn-primary mt-5 mb-5" @onclick="ShowAlert">Show Alert</button> *@
-            @* <button class="btn btn-primary mt-5 mb-5" @onclick="DeleteConfirm">Delete</button> *@
         </EditForm>
     </div>
 </div>
@@ -101,13 +99,7 @@
 
     private List<PostInfoDto> postInfoDtoList = new();
     private List<ColumnDefinition<PostInfoDto>> GridColumns = new()
-    {
-        // new ColumnDefinition<EmployeeDto>
-        // {
-        //     Title = "ID",
-        //     PropertyName = nameof(EmployeeDto.EmployeeID),
-        //     CellTemplate = e => e.EmployeeID
-        // },
+    {     
         new ColumnDefinition<PostInfoDto>
         {
             Title = "Code",
@@ -156,7 +148,7 @@
             if (flag)
             {
                 postInfoDtoList = await postInfoService.GetAllAsync();
-                await JS.InvokeVoidAsync("showAlert", "success", "Deleted!", "Employee deleted successfully.");
+                await JS.InvokeVoidAsync("showAlert", "success", "Deleted!", "Position deleted successfully.");
             }
             else
             {
@@ -164,8 +156,6 @@
             }
         }
     }
-
-
     #endregion
    
 }
