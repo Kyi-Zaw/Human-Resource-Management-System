@@ -1,3 +1,18 @@
+.child-menu {
+    list-style: none;
+    padding-left: 20px;
+    margin: 5px 0;
+}
+
+.child-menu li {
+    margin: 3px 0;
+}
+
+.child-menu .nav-link {
+    font-size: 0.9rem;
+    color: #666;
+}
+
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
 }
@@ -80,4 +95,19 @@
         height: calc(100vh - 3.5rem);
         overflow-y: auto;
     }
+}
+
+.child-menu {
+    list-style: none;
+    padding-left: 20px;
+    margin: 5px 0;
+}
+
+.child-menu li {
+    margin: 3px 0;
+}
+
+.child-menu .nav-link {
+    font-size: 0.9rem;
+    color: #666;
 }
