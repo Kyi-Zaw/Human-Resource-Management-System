@@ -16,9 +16,13 @@ namespace ApplicationLayer.DTOs
 
         public string CreatedUserID { get; set; }
 
+        public string? CreatedUser { get; set; }
+
         public DateTime? UpdatedDate { get; set; }
 
         public string? UpdatedUserID { get; set; }
+
+        public string? UpdatedUser { get; set; }
 
     }
 }

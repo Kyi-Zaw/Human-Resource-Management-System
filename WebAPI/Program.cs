@@ -1,4 +1,5 @@
 using ApplicationLayer.IRepository;
+using ApplicationLayer.Services;
 using InfrastructorLayer.Data;
 using InfrastructorLayer.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("MyDb")));
 builder.Services.AddScoped<IEmployee, EmployeeRepository>();
+builder.Services.AddScoped<IPostInfo, PostInfoRepository>();
+
 
 var app = builder.Build();
 
