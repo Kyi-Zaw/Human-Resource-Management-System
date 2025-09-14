@@ -1,0 +1,171 @@
+﻿@page "/postinfo"
+@using ApplicationLayer.DTOs
+@using ApplicationLayer.RequestModel
+@using ApplicationLayer.Services
+@using DomainLayer.Entities;
+@using NetcodeHub.Packages.Components.Validations.OnInput;
+@using NetcodeHub.Packages.Components.Toast;
+@using Web.WebComponent;
+@inject IPostInfoService postInfoService
+@inject ToastService toastService
+@inject IJSRuntime JS
+
+<PageTitle>Position</PageTitle>
+
+<div class="row">
+    <div class="col-lg-6">
+        <EditForm Model="postInfo" OnValidSubmit="Save">
+            <DataAnnotationsValidator />
+            <FloatingText @bind-Value="postInfo.Code" Label="Code"  class="form-control mb-3" />
+            <ValidationMessage For="()=>postInfo.Code" />
+
+            <FloatingTextArea @bind-Value="postInfo.Description" Label="Description"  class="form-control mb-3" />
+            <ValidationMessage For="()=>postInfo.Description" />
+
+            <button class="btn btn-primary mt-3 mb-3" type="submit">Save</button>
+            <button class="btn btn-secondary mt-3 mb-3" @onclick="Cancel">Cancel</button>
+            @* <button class="btn btn-primary mt-5 mb-5" @onclick="ShowAlert">Show Alert</button> *@
+            @* <button class="btn btn-primary mt-5 mb-5" @onclick="DeleteConfirm">Delete</button> *@
+        </EditForm>
+    </div>
+</div>
+
+
+
+
+<Paging TItem="PostInfoDto"
+        Items="postInfoDtoList"
+        PageSize="5"
+        ShowRowNumber="true"
+        EnableSearch="true"
+        OnEdit="EditEmployee"
+        OnDelete="DeleteEmployee"
+        Columns="GridColumns">
+</Paging>
+
+
+
+@code {
+
+    PostInfoRequest postInfo = new();
+    PostInfoDto postInfoDto = new();
+    string postInfoId = string.Empty;
+
+
+
+    async Task Save()
+    {
+        if (postInfoId == string.Empty)
+        {
+            var (flag, message) = await postInfoService.AddAsync(postInfo);
+            if (!flag)
+            {
+                await JS.InvokeVoidAsync("showAlert", "error", "Failed!", message);
+                return;
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("showAlert", "success", "Saved!", "Your data has been saved.");
+                postInfoDtoList = await postInfoService.GetAllAsync();
+                postInfo = new PostInfoRequest();
+
+                StateHasChanged();
+            }
+        }
+        else
+        {
+            var (flag, message) = await postInfoService.UpdateAsync(postInfoId, postInfo);
+            if (flag)
+            {
+                postInfoDtoList = await postInfoService.GetAllAsync();
+                postInfo = new PostInfoRequest();
+                postInfoId = string.Empty;
+                await JS.InvokeVoidAsync("showAlert", "success", "Updated!", "Position updated successfully.");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("showAlert", "error", "Failed!", message);
+            }
+        }
+
+    }
+
+    private void Cancel()
+    {
+        postInfo = new PostInfoRequest();
+        postInfoId = string.Empty;
+    }
+
+
+    #region pagination
+
+    private List<PostInfoDto> postInfoDtoList = new();
+    private List<ColumnDefinition<PostInfoDto>> GridColumns = new()
+    {
+        // new ColumnDefinition<EmployeeDto>
+        // {
+        //     Title = "ID",
+        //     PropertyName = nameof(EmployeeDto.EmployeeID),
+        //     CellTemplate = e => e.EmployeeID
+        // },
+        new ColumnDefinition<PostInfoDto>
+        {
+            Title = "Code",
+            PropertyName = nameof(PostInfoDto.Code),
+            CellTemplate = e => e.Code
+        },
+        new ColumnDefinition<PostInfoDto>
+        {
+            Title = "Description",
+            PropertyName = nameof(PostInfoDto.Description),
+            CellTemplate = e => e.Description
+        }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        postInfoDtoList = await postInfoService.GetAllAsync();
+    }
+
+    private async Task EditEmployee(PostInfoDto postInfoto)
+    {
+        var postInfoToEdit = postInfoDtoList.FirstOrDefault(e => e.PostID == postInfoto.PostID);
+        if (postInfoToEdit != null)
+        {
+            postInfoDto = await postInfoService.GetByIDAsync(postInfoto.PostID!);
+            postInfo = new PostInfoRequest
+            {
+                Code = postInfoDto.Code,
+                Description = postInfoDto.Description
+            };
+            postInfoId = postInfoToEdit.PostID!;
+        }
+    }
+
+    private async Task DeleteEmployee(PostInfoDto postInfoto)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>(
+            "confirmAction",
+            "Are you sure to delete?",
+            "This action cannot be undone!"
+        );
+
+        if (confirmed)
+        {
+            var (flag, message) = await postInfoService.DeleteAsync(postInfoto.PostID);
+            if (flag)
+            {
+                postInfoDtoList = await postInfoService.GetAllAsync();
+                await JS.InvokeVoidAsync("showAlert", "success", "Deleted!", "Employee deleted successfully.");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("showAlert", "error", "Failed!", message);
+            }
+        }
+    }
+
+
+    #endregion
+   
+}
