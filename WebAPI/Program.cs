@@ -16,6 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("MyDb")));
 builder.Services.AddScoped<IEmployee, EmployeeRepository>();
 builder.Services.AddScoped<IPostInfo, PostInfoRepository>();
+builder.Services.AddScoped<IEducation, EducationRepository>();
 
 
 var app = builder.Build();
