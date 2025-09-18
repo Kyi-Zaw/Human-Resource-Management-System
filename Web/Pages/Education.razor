@@ -1,0 +1,201 @@
+﻿@page "/education"
+@inject IEmployeeService emp
+
+@using System.ComponentModel.DataAnnotations
+@using ApplicationLayer.DTOs
+@using ApplicationLayer.RequestModel
+@using ApplicationLayer.Services
+
+<h4>Education and Qualification</h4>
+
+<EditForm Model="educationRequest" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="row mb-3">
+        <!-- Employee Dropdown -->
+        <div class="col-md-3">
+            <label>Employee No *</label>
+            <InputSelect class="form-control" @bind-Value="educationRequest.EmployeeID"
+                         @onchange="OnEmployeeChanged">
+                <option value="">-- Select Employee --</option>
+                @foreach (var emp in Employees)
+                {
+                    <option value="@emp.EmployeeID">@emp.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+       @*  <!-- FullName -->
+        <div class="col-md-3">
+            <label>Full Name</label>
+            <InputText class="form-control" @bind-Value="educationRequest." readonly />
+        </div>
+
+        <!-- Position -->
+        <div class="col-md-3">
+            <label>Position</label>
+            <InputText class="form-control" @bind-Value="educationRequest.Position" readonly />
+        </div>
+
+        <!-- Cost Center -->
+        <div class="col-md-3">
+            <label>Cost Center</label>
+            <InputText class="form-control" @bind-Value="educationRequest.CostCenter" readonly />
+        </div> *@
+    </div>
+
+</EditForm>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Education *</th>
+            <th>Subject *</th>
+            <th>Institution *</th>
+            <th>Start Year *</th>
+            <th>End Year *</th>
+            <th>Remark</th>
+            <th style="width:160px;" class="text-center">Attachment</th>
+            <th style="width:160px;" class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in educationRequest.EducationRequestItems)
+        {
+            <tr>
+                <td>@item.Education</td>
+                <td>@item.Subject</td>
+                <td>@item.Institution</td>
+                <td>@item.StartYear</td>
+                <td>@item.EndYear</td>
+                <td>@item.Remark</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.Attachment))
+                    {
+                        <a href="@item.Attachment" target="_blank">Download</a>
+                    }
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-primary" @onclick="() => EditRow(item)">Edit</button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteRow(item)">Delete</button>
+                </td>
+            </tr>
+        }
+
+        <tr>
+            <td>
+                <input type="text" class="form-control" @bind="educationItemRequest.Education" />
+            </td>
+            <td>
+                <input type="text" class="form-control" @bind="educationItemRequest.Subject" />
+            </td>
+            <td>
+                <input type="text" class="form-control" @bind="educationItemRequest.Institution" />
+            </td>
+            <td>
+                <input type="number" class="form-control" @bind="educationItemRequest.StartYear" />
+            </td>
+            <td>
+                <input type="number" class="form-control" @bind="educationItemRequest.EndYear" />
+            </td>
+            <td>
+                <input type="text" class="form-control" @bind="educationItemRequest.Remark" />
+            </td>
+            <td>
+                <InputFile OnChange="UploadFile" />
+                @if (!string.IsNullOrEmpty(educationItemRequest.Attachment))
+                {
+                    <span>@educationItemRequest.Attachment</span>
+                }
+            </td>
+            <td>
+                <button class="btn btn-success btn-sm" @onclick="AddEducation">Update</button>
+                <button class="btn btn-secondary btn-sm" @onclick="ClearNewEducation">Cancel</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="mt-3">
+    <button class="btn btn-primary">Save & View List</button>
+    <button class="btn btn-secondary">Save & Add Another</button>
+    <button class="btn btn-danger">Cancel</button>
+</div>
+
+@code {
+    // Employee info
+    private string EmployeeNo { get; set; } = "95000002";
+    private string FullName { get; set; } = "Cho Cho Aung";
+    private string Position { get; set; } = "Cleaner";
+    private string CostCenter { get; set; } = "ADMIN_GENERAL";
+
+    private EducationRequest educationRequest = new();
+    private EducationItemRequest educationItemRequest = new();
+
+
+    private List<EmployeeDto> Employees = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch employee list from API
+        Employees =await emp.GetAllAsync();
+    }
+
+    private void OnEmployeeChanged(ChangeEventArgs e)
+    {
+        var selectedId = Convert.ToString(e.Value);
+        var emp = Employees.FirstOrDefault(x => x.EmployeeID == selectedId);
+
+        if (emp != null)
+        {
+            educationRequest.EmployeeID = emp.EmployeeID;
+            educationRequest.EmployeeName = emp.Name;
+           
+        }
+    }
+
+    private void HandleValidSubmit()
+    {
+        // Save logic here
+    }
+
+
+
+    private void AddEducation()
+    {
+        if (!string.IsNullOrWhiteSpace(educationItemRequest.Education))
+        {
+            educationRequest.EducationRequestItems.Add(educationItemRequest);
+            educationItemRequest = new EducationItemRequest();
+        }
+    }
+
+    private void EditRow(EducationItemRequest item)
+    {
+        educationItemRequest = item;
+        educationRequest.EducationRequestItems.Remove(item);
+    }
+
+    private void DeleteRow(EducationItemRequest item)
+    {
+        educationRequest.EducationRequestItems.Remove(item);
+    }
+
+    private void ClearNewEducation()
+    {
+        educationRequest = new EducationRequest();
+    }
+
+    private async Task UploadFile(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            // Example only: In real CRUD, upload to API
+            //NewEducation.AttachmentName = file.Name;
+            //NewEducation.AttachmentUrl = "#"; 
+        }
+    }
+
+}
