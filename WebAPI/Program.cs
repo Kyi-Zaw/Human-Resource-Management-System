@@ -14,7 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("MyDb")));
-builder.Services.AddScoped<IEmployee, EmployeeRepository>();
+builder.Services.AddScoped<IEmployeeInfo, EmployeeRepository>();
 builder.Services.AddScoped<IPostInfo, PostInfoRepository>();
 
 

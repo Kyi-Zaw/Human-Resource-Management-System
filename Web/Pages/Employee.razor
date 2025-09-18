@@ -1,5 +1,6 @@
 ﻿@page "/employee"
 @using ApplicationLayer.DTOs
+@using ApplicationLayer.RequestModel
 @using ApplicationLayer.Services
 @using DomainLayer.Entities;
 @using NetcodeHub.Packages.Components.Validations.OnInput;
@@ -13,13 +14,13 @@
 
 <div class="row">
     <div class="col-lg-6">
-        <EditForm Model="employee" OnValidSubmit="Save">
+        <EditForm Model="employeeInfo" OnValidSubmit="Save">
             <DataAnnotationsValidator />
-            <FloatingText @bind-Value="employee.Name" Label="Fullname" Placeholder="John Doe" class="form-control mb-3" />
-            <ValidationMessage For="()=>employee.Name" />
+            <FloatingText @bind-Value="employeeInfo.Name" Label="Fullname" Placeholder="John Doe" class="form-control mb-3" />
+            <ValidationMessage For="()=>employeeInfo.Name" />
 
-            <FloatingTextArea @bind-Value="employee.Address" Label="Address" Placeholder="eg. 349(Kha)/Padauk(6) streets/1 wards" class="form-control mb-3" />
-            <ValidationMessage For="()=>employee.Address"/>
+            <FloatingTextArea @bind-Value="employeeInfo.Address" Label="Address" Placeholder="eg. 349(Kha)/Padauk(6) streets/1 wards" class="form-control mb-3" />
+            <ValidationMessage For="()=>employeeInfo.Address" />
 
             <button class="btn btn-primary mt-3 mb-3" type="submit">Save</button>
             <button class="btn btn-secondary mt-3 mb-3" @onclick="Cancel">Cancel</button>
@@ -45,7 +46,8 @@
 
 
 @code {
-    EmployeeDto employee = new();
+    EmployeeInfoRequest employeeInfo = new();
+    EmployeeDto employeeDto = new();
     string editingId = string.Empty;
 
 
@@ -54,7 +56,7 @@
     {
         if (editingId==string.Empty)
         {
-            var (flag, message) = await emp.AddAsync(employee);
+            var (flag, message) = await emp.AddAsync(employeeInfo);
             if (!flag)
             {
                 await JS.InvokeVoidAsync("showAlert", "error", "Failed!", message);
@@ -64,19 +66,18 @@
             {
                 await JS.InvokeVoidAsync("showAlert", "success", "Saved!", "Your data has been saved.");
                 Employees = await emp.GetAllAsync();
-                employee = new EmployeeDto();
+                employeeInfo = new EmployeeInfoRequest();
 
                 StateHasChanged(); 
             }
         }
         else
         {
-            employee.EmployeeID = editingId;
-            var (flag, message) = await emp.UpdateAsync(employee);
+            var (flag, message) = await emp.UpdateAsync(editingId, employeeInfo);
             if (flag)
             {
                 Employees = await emp.GetAllAsync();
-                employee = new EmployeeDto();
+                employeeInfo = new EmployeeInfoRequest();
                 editingId = string.Empty;
                 await JS.InvokeVoidAsync("showAlert", "success", "Updated!", "Employee updated successfully.");
             }
@@ -113,7 +114,7 @@
 
     private void Cancel()
     {
-        employee = new EmployeeDto();
+        employeeInfo = new EmployeeInfoRequest();
         editingId = string.Empty;
     }
 
@@ -152,7 +153,12 @@
         var empToEdit = Employees.FirstOrDefault(e => e.EmployeeID == empdto.EmployeeID);
         if (empToEdit != null)
         {
-            employee = await emp.GetByIDAsync(empToEdit.EmployeeID!);
+            employeeDto = await emp.GetByIDAsync(empdto.EmployeeID!);
+            employeeInfo = new EmployeeInfoRequest
+                {
+                    Name = employeeDto.Name,
+                    Address = employeeDto.Address
+                };
             editingId = empToEdit.EmployeeID!;
         }
     }

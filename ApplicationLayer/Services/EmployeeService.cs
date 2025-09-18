@@ -1,44 +1,46 @@
 ﻿using ApplicationLayer.DTOs;
 using ApplicationLayer.IRepository;
+using ApplicationLayer.RequestModel;
 using DomainLayer.Entities;
 using System.Net.Http;
 using System.Net.Http.Json;
 
-namespace ApplicationLayer.Services;
-
-public class EmployeeService : IEmployeeService
+namespace ApplicationLayer.Services
 {
-    private readonly HttpClient httpClient;
-
-    public EmployeeService(HttpClient httpClient)
+    public class EmployeeService : IEmployeeService
     {
-        this.httpClient = httpClient;
-    }
-    public async Task<ServiceResponse> AddAsync(EmployeeDto employee)
-    {
-        var data = await httpClient.PostAsJsonAsync("api/employee",employee);
-        var response = await data.Content.ReadFromJsonAsync<ServiceResponse>();
-        return response!;
-    }
+        private readonly HttpClient httpClient;
 
-    public async Task<ServiceResponse> DeleteAsync(string id)
-    {
-        var data = await httpClient.DeleteAsync($"api/employee/{id}");
-        var response = await data.Content.ReadFromJsonAsync<ServiceResponse>();
-        return response!;
-    }
+        public EmployeeService(HttpClient httpClient)
+        {
+            this.httpClient = httpClient;
+        }
+        public async Task<ServiceResponse> AddAsync(EmployeeInfoRequest employeeInfoRequest)
+        {
+            var data = await httpClient.PostAsJsonAsync("api/employee", employeeInfoRequest);
+            var response = await data.Content.ReadFromJsonAsync<ServiceResponse>();
+            return response!;
+        }
 
-    public async Task<List<EmployeeDto>> GetAllAsync() => 
-        await httpClient.GetFromJsonAsync<List<EmployeeDto>>("api/employee")!;
-   
+        public async Task<ServiceResponse> DeleteAsync(string id)
+        {
+            var data = await httpClient.DeleteAsync($"api/employee/{id}");
+            var response = await data.Content.ReadFromJsonAsync<ServiceResponse>();
+            return response!;
+        }
 
-    public async Task<EmployeeDto> GetByIDAsync(string id) =>
-    await httpClient.GetFromJsonAsync<EmployeeDto>($"api/employee/{id}")!;
+        public async Task<List<EmployeeDto>> GetAllAsync() =>
+            await httpClient.GetFromJsonAsync<List<EmployeeDto>>("api/employee")!;
 
-    public async Task<ServiceResponse> UpdateAsync(EmployeeDto employee)
-    {
-        var data = await httpClient.PutAsJsonAsync("api/employee", employee);
-        var response = await data.Content.ReadFromJsonAsync<ServiceResponse>();
-        return response!;
+
+        public async Task<EmployeeDto> GetByIDAsync(string id) =>
+        await httpClient.GetFromJsonAsync<EmployeeDto>($"api/employee/{id}")!;
+
+        public async Task<ServiceResponse> UpdateAsync(string id, EmployeeInfoRequest employeeInfoRequest)
+        {
+            var data = await httpClient.PutAsJsonAsync($"api/employee/{id}", employeeInfoRequest);
+            var response = await data.Content.ReadFromJsonAsync<ServiceResponse>();
+            return response!;
+        }
     }
 }

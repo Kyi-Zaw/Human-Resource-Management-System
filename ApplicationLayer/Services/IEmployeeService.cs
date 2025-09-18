@@ -1,13 +1,14 @@
 ﻿using ApplicationLayer.DTOs;
-using DomainLayer.Entities;
+using ApplicationLayer.RequestModel;
 
-namespace ApplicationLayer.Services;
-
-public interface IEmployeeService
+namespace ApplicationLayer.Services
 {
-    Task<ServiceResponse> AddAsync(EmployeeDto employee);
-    Task<ServiceResponse> UpdateAsync(EmployeeDto employee);
-    Task<ServiceResponse> DeleteAsync(string id);
-    Task<List<EmployeeDto>> GetAllAsync();
-    Task<EmployeeDto> GetByIDAsync(string id);
+    public interface IEmployeeService
+    {
+        Task<ServiceResponse> AddAsync(EmployeeInfoRequest employeeInfoRequest);
+        Task<ServiceResponse> UpdateAsync(string id, EmployeeInfoRequest employeeInfoRequest);
+        Task<ServiceResponse> DeleteAsync(string id);
+        Task<List<EmployeeDto>> GetAllAsync();
+        Task<EmployeeDto> GetByIDAsync(string id);
+    }
 }

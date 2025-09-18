@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ApplicationLayer.DTOs
 {
-    public class EmployeeDto 
+    public class EmployeeDto
     {
-        public string? EmployeeID { get; set; }
+        public string EmployeeID { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
     }
