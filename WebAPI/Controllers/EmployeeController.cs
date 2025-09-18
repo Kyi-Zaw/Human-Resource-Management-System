@@ -1,5 +1,6 @@
 ﻿using ApplicationLayer.DTOs;
 using ApplicationLayer.IRepository;
+using ApplicationLayer.RequestModel;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -10,9 +11,9 @@ namespace WebAPI.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        public readonly IEmployee employee;
+        public readonly IEmployeeInfo employee;
 
-        public EmployeeController(IEmployee employee)
+        public EmployeeController(IEmployeeInfo employee)
         {
             this.employee = employee;
         }
@@ -32,16 +33,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] EmployeeDto employee)
+        public async Task<IActionResult> Add([FromBody] EmployeeInfoRequest employee)
         {
             var result =await this.employee.AddAsync(employee);
             return Ok(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] EmployeeDto employee)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id,[FromBody] EmployeeInfoRequest employeeInfoRequest)
         {
-            var result = await this.employee.UpdateAsync(employee);
+            var result = await this.employee.UpdateAsync(id,employeeInfoRequest);
             return Ok(result);
         }
 

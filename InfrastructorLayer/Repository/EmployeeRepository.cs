@@ -1,14 +1,19 @@
-﻿
-using ApplicationLayer.DTOs;
+﻿using ApplicationLayer.DTOs;
 using ApplicationLayer.IRepository;
+using ApplicationLayer.RequestModel;
+using ApplicationLayer.Services;
 using DomainLayer.Entities;
 using InfrastructorLayer.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata.Ecma335;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace InfrastructorLayer.Repository;
-
-public class EmployeeRepository : IEmployee
+namespace InfrastructorLayer.Repository
+{
+public class EmployeeRepository : IEmployeeInfo
 {
     private readonly AppDbContext appDbContext;
     public EmployeeRepository(AppDbContext appDbContext)
@@ -16,7 +21,7 @@ public class EmployeeRepository : IEmployee
         this.appDbContext = appDbContext;
     }
 
-    public async Task<ServiceResponse> AddAsync(EmployeeDto employee)
+    public async Task<ServiceResponse> AddAsync(EmployeeInfoRequest employee)
     {
         var data =await appDbContext.Employees.FirstOrDefaultAsync(x => x.Name.ToLower().Trim() == employee.Name.ToLower().Trim());
         if (data is not null) return new ServiceResponse(false,"Duplicate Data Exist...");
@@ -65,16 +70,17 @@ public class EmployeeRepository : IEmployee
     }).FirstOrDefaultAsync();
 
 
-    public async Task<ServiceResponse> UpdateAsync(EmployeeDto employee)
+    public async Task<ServiceResponse> UpdateAsync(string id,EmployeeInfoRequest employeeInfo)
     {
        
-        var data = await appDbContext.Employees.FirstOrDefaultAsync(x => x.EmployeeID == employee.EmployeeID);
+        var data = await appDbContext.Employees.FirstOrDefaultAsync(x => x.EmployeeID == id);
 
         if (data == null)
             return new ServiceResponse(false, "Employee not found");
 
-        data.Name = employee.Name;
-        data.Address = employee.Address; 
+        data.EmployeeID = id;
+        data.Name = employeeInfo.Name;
+        data.Address = employeeInfo.Address; 
 
         appDbContext.Employees.Update(data); 
 
@@ -85,4 +91,5 @@ public class EmployeeRepository : IEmployee
     }
 
     private async Task SaveChangesAsync() => await appDbContext.SaveChangesAsync();
+}
 }
