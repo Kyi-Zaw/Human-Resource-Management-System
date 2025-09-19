@@ -25,6 +25,13 @@ namespace WebAPI.Controllers
             return Ok(data);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByID(string id)
+        {
+            var data = await education.GetByIdAsync(id);
+            return Ok(data);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] EducationRequest educationRequest)
         {
@@ -32,7 +39,19 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody] EducationRequest educationRequest)
+        {
+            var result = await this.education.UpdateAsync(id, educationRequest);
+            return Ok(result);
+        }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var result = await education.DeleteAsync(id);
+            return Ok(result);
+        }
 
     }
 }
