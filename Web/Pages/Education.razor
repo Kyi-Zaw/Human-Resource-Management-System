@@ -1,5 +1,9 @@
 ﻿@page "/education"
 @inject IEmployeeService emp
+@inject IJSRuntime JS
+@using System.IO;
+@using System.Net.Http.Headers
+@inject HttpClient Http
 
 @using System.ComponentModel.DataAnnotations
 @using ApplicationLayer.DTOs
@@ -8,7 +12,7 @@
 
 <h4>Education and Qualification</h4>
 
-<EditForm Model="educationRequest" OnValidSubmit="HandleValidSubmit">
+<EditForm Model="educationRequest">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -25,27 +29,13 @@
                 }
             </InputSelect>
         </div>
-
-       @*  <!-- FullName -->
-        <div class="col-md-3">
-            <label>Full Name</label>
-            <InputText class="form-control" @bind-Value="educationRequest." readonly />
-        </div>
-
-        <!-- Position -->
-        <div class="col-md-3">
-            <label>Position</label>
-            <InputText class="form-control" @bind-Value="educationRequest.Position" readonly />
-        </div>
-
-        <!-- Cost Center -->
-        <div class="col-md-3">
-            <label>Cost Center</label>
-            <InputText class="form-control" @bind-Value="educationRequest.CostCenter" readonly />
-        </div> *@
     </div>
 
 </EditForm>
+
+<div class="mb-3">
+    <InputFile id="fileInput" OnChange="OnInputFileChange" class="form-control" />
+</div>
 
 <table class="table table-bordered">
     <thead>
@@ -103,7 +93,7 @@
                 <input type="text" class="form-control" @bind="educationItemRequest.Remark" />
             </td>
             <td>
-                <InputFile OnChange="UploadFile" />
+                
                 @if (!string.IsNullOrEmpty(educationItemRequest.Attachment))
                 {
                     <span>@educationItemRequest.Attachment</span>
@@ -124,16 +114,10 @@
 </div>
 
 @code {
-    // Employee info
-    private string EmployeeNo { get; set; } = "95000002";
-    private string FullName { get; set; } = "Cho Cho Aung";
-    private string Position { get; set; } = "Cleaner";
-    private string CostCenter { get; set; } = "ADMIN_GENERAL";
+  
 
     private EducationRequest educationRequest = new();
     private EducationItemRequest educationItemRequest = new();
-
-
     private List<EmployeeDto> Employees = new();
 
     protected override async Task OnInitializedAsync()
@@ -154,12 +138,6 @@
            
         }
     }
-
-    private void HandleValidSubmit()
-    {
-        // Save logic here
-    }
-
 
 
     private void AddEducation()
@@ -187,14 +165,38 @@
         educationRequest = new EducationRequest();
     }
 
-    private async Task UploadFile(InputFileChangeEventArgs e)
+    private string SelectedFileName = string.Empty;
+    private long fileSize;
+
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        var file = e.File;
-        if (file != null)
+        var files = e.GetMultipleFiles();
+        // if (files.Count == 0)
+        // {
+        //     ErrorMessage = "Please insert file.";
+        //     return;
+        // }
+
+        var file = files[0];
+        SelectedFileName = file.Name;
+        var extension = Path.GetExtension(file.Name).ToLower();
+        try
         {
-            // Example only: In real CRUD, upload to API
-            //NewEducation.AttachmentName = file.Name;
-            //NewEducation.AttachmentUrl = "#"; 
+            using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10MB
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var content = new MultipartFormDataContent();
+            content.Add(new StreamContent(new MemoryStream(ms.ToArray())), "file", file.Name);        
+            var response = await Http.PostAsync($"api/upload/save/{"Employee"}/{"Education"}", content);
+            //if (response.IsSuccessStatusCode)
+                //SuccessMessage = "Upload Successfully!";
+            //else
+                //ErrorMessage = "Upload failed. Please try again.";
+        }
+        catch (Exception ex)
+        {
+           // ErrorMessage = $"Error: {ex.Message}";
         }
     }
 
