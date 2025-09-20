@@ -21,4 +21,9 @@
     <ProjectReference Include="..\InfrastructorLayer\InfrastructorLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Files\" />
+    <Folder Include="Files\Employee\" />
+  </ItemGroup>
+
 </Project>

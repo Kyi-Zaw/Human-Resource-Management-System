@@ -1,9 +1,9 @@
 ﻿@page "/education"
 @inject IEmployeeService emp
 @inject IJSRuntime JS
+@inject IFileUploadService fileUploadService
 @using System.IO;
 @using System.Net.Http.Headers
-@inject HttpClient Http
 
 @using System.ComponentModel.DataAnnotations
 @using ApplicationLayer.DTOs
@@ -11,6 +11,7 @@
 @using ApplicationLayer.Services
 
 <h4>Education and Qualification</h4>
+
 
 <EditForm Model="educationRequest">
     <DataAnnotationsValidator />
@@ -32,10 +33,6 @@
     </div>
 
 </EditForm>
-
-<div class="mb-3">
-    <InputFile id="fileInput" OnChange="OnInputFileChange" class="form-control" />
-</div>
 
 <table class="table table-bordered">
     <thead>
@@ -63,7 +60,8 @@
                 <td>
                     @if (!string.IsNullOrEmpty(item.Attachment))
                     {
-                        <a href="@item.Attachment" target="_blank">Download</a>
+                        <a @onclick="() => DownLoad(item.Attachment)" target="_blank">Download</a>
+                        
                     }
                 </td>
                 <td>
@@ -93,7 +91,7 @@
                 <input type="text" class="form-control" @bind="educationItemRequest.Remark" />
             </td>
             <td>
-                
+                <InputFile id="fileInput" OnChange="OnInputFileChange" class="form-control" />
                 @if (!string.IsNullOrEmpty(educationItemRequest.Attachment))
                 {
                     <span>@educationItemRequest.Attachment</span>
@@ -114,8 +112,8 @@
 </div>
 
 @code {
-  
 
+    private string fileName = string.Empty;
     private EducationRequest educationRequest = new();
     private EducationItemRequest educationItemRequest = new();
     private List<EmployeeDto> Employees = new();
@@ -123,7 +121,7 @@
     protected override async Task OnInitializedAsync()
     {
         // Fetch employee list from API
-        Employees =await emp.GetAllAsync();
+        Employees = await emp.GetAllAsync();
     }
 
     private void OnEmployeeChanged(ChangeEventArgs e)
@@ -135,7 +133,7 @@
         {
             educationRequest.EmployeeID = emp.EmployeeID;
             educationRequest.EmployeeName = emp.Name;
-           
+
         }
     }
 
@@ -144,6 +142,7 @@
     {
         if (!string.IsNullOrWhiteSpace(educationItemRequest.Education))
         {
+            educationItemRequest.Attachment = fileName;
             educationRequest.EducationRequestItems.Add(educationItemRequest);
             educationItemRequest = new EducationItemRequest();
         }
@@ -165,38 +164,34 @@
         educationRequest = new EducationRequest();
     }
 
-    private string SelectedFileName = string.Empty;
     private long fileSize;
 
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
         var files = e.GetMultipleFiles();
-        // if (files.Count == 0)
-        // {
-        //     ErrorMessage = "Please insert file.";
-        //     return;
-        // }
 
         var file = files[0];
-        SelectedFileName = file.Name;
-        var extension = Path.GetExtension(file.Name).ToLower();
-        try
+        fileName = file.Name;
+
+        var response = await fileUploadService.Create(file, "Employee", fileName);
+        //if (response.IsSuccessStatusCode)
+        //SuccessMessage = "Upload Successfully!";
+        //else
+        //ErrorMessage = "Upload failed. Please try again.";
+
+    }
+
+    private async Task DownLoad(string url)
+    {
+        var response = await fileUploadService.Download(url);
+
+        if (response.IsSuccessStatusCode)
         {
-            using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10MB
-            using var ms = new MemoryStream();
-            await stream.CopyToAsync(ms);
-            var content = new MultipartFormDataContent();
-            content.Add(new StreamContent(new MemoryStream(ms.ToArray())), "file", file.Name);        
-            var response = await Http.PostAsync($"api/upload/save/{"Employee"}/{"Education"}", content);
-            //if (response.IsSuccessStatusCode)
-                //SuccessMessage = "Upload Successfully!";
-            //else
-                //ErrorMessage = "Upload failed. Please try again.";
-        }
-        catch (Exception ex)
-        {
-           // ErrorMessage = $"Error: {ex.Message}";
+            var content = await response.Content.ReadAsByteArrayAsync();
+            var fileNameHeader = url;
+            using var streamRef = new Microsoft.JSInterop.DotNetStreamReference(new MemoryStream(content));
+            await JS.InvokeVoidAsync("downloadFileFromStream", fileNameHeader, streamRef);
         }
     }
 

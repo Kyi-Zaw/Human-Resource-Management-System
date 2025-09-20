@@ -13,6 +13,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 
 builder.Services.AddScoped<IEmployeeService,EmployeeService>();
 builder.Services.AddScoped<IPostInfoService, PostInfoService>();
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 
 
 builder.Services.AddScoped<ToastService>();

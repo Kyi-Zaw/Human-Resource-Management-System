@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace WebAPI.Controllers
 {
@@ -14,27 +15,40 @@ namespace WebAPI.Controllers
             _env = env;
         }
 
-        [HttpPost("save{moduleFolder,formFolder}")]
-        public async Task<IActionResult> UploadExcel(string moduleFolder, string formFolder,IFormFile file)
+        [HttpPost("save/{moduleFolder}")]
+        public async Task<IActionResult> UploadExcel(string moduleFolder,IFormFile file)
         {
             if (file == null || file.Length == 0)
-                return BadRequest("Please insert file.");
-
-            var ext = Path.GetExtension(file.FileName).ToLower();
-          
-            var fileName = $"{file.FileName}_{DateTime.Now:dd-M-yyyy_hh-mm-ss_tt}{ext}";
-            var folder = Path.Combine("Files/"+moduleFolder +"/", formFolder);
+                return BadRequest("Please insert file.");   
+            var folder = Path.Combine("Files/"+moduleFolder);
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
-
-            var filePath = Path.Combine(folder, fileName);
-
+            var filePath = Path.Combine(folder, file.FileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
+            return Ok(new { Message = "Upload Successfully", FileName = file.FileName });
+        }
 
-            return Ok(new { Message = "Upload Successfully", FileName = fileName });
+        [HttpGet("download/{fileName}")]
+        public IActionResult DownloadFile(string fileName)
+        {
+            var filesPath = Path.Combine("Files");
+            var employeePath = Path.Combine(filesPath, "Employee");
+            var filePath = Path.Combine(employeePath, fileName);
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound("File not found.");
+            }
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(filePath, out string contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+
+            var fileBytes = System.IO.File.ReadAllBytes(filePath);
+            return File(fileBytes, contentType, fileName);
         }
     }
 }
