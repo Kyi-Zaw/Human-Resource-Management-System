@@ -1,0 +1,120 @@
+﻿@page "/login"
+@using System.ComponentModel.DataAnnotations
+@using ApplicationLayer.RequestModel
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+<PageTitle>Login</PageTitle>
+
+<div class="login-container">
+    <div class="login-header">
+        <h3>Human Resource Management System</h3>
+        <p>Enter your account details to sign in</p>
+    </div>
+
+    <EditForm Model="@loginModel" OnValidSubmit="@HandleLogin" FormName="loginForm">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <InputText @bind-Value="loginModel.Email" class="form-input" id="email" placeholder=" " />
+            <label for="email">Email Address</label>
+            <ValidationMessage For="@(() => loginModel.Email)" />
+        </div>
+
+        <div class="form-group">
+            <InputText type="password" @bind-Value="loginModel.Password" class="form-input" id="password" placeholder=" " />
+            <label for="password">Password</label>
+            <ValidationMessage For="@(() => loginModel.Password)" />
+        </div>
+
+        <button type="submit" class="login-btn" disabled="@isLoading">
+            @if (isLoading)
+            {
+                <span class="spinner"></span>
+                @* Signing in... *@
+            }
+            else
+            {
+                <span>Sign In</span>
+            }
+        </button>
+    </EditForm>
+
+    <div class="divider d-none">
+        <span>or continue with</span>
+    </div>
+
+    <div class="social-login d-none">
+        <button class="social-btn" @onclick="LoginWithGoogle" disabled="@isLoading">
+            <span>👤</span> Google
+        </button>
+        <button class="social-btn" @onclick="LoginWithFacebook" disabled="@isLoading">
+            <span>📘</span> Facebook
+        </button>
+    </div>
+
+    <div class="forgot-password">
+        <a href="#" @onclick="ShowForgotPassword" @onclick:preventDefault>Forgot Password?</a>
+    </div>
+
+    <div class="signup-link">
+        <p>Don't have an account? <a href="/register" @onclick:preventDefault @onclick="NavigateToRegister">Sign up here</a></p>
+    </div>
+</div>
+
+
+
+@code {
+    private LoginRequest loginModel = new();
+    private bool isLoading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(100);
+    }
+
+    private async Task HandleLogin()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            await Task.Delay(2000);
+
+
+            Navigation.NavigateTo("/");
+            await JSRuntime.InvokeVoidAsync("alert", "Login successful! 🎉");
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Login failed: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoginWithGoogle()
+    {
+        await JSRuntime.InvokeVoidAsync("alert", "Google Login clicked! 🚀");
+    }
+
+    private async Task LoginWithFacebook()
+    {
+        await JSRuntime.InvokeVoidAsync("alert", "Facebook Login clicked! 🚀");
+    }
+
+    private void ShowForgotPassword()
+    {
+        Navigation.NavigateTo("/forgot-password");
+    }
+
+    private void NavigateToRegister()
+    {
+        Navigation.NavigateTo("/register");
+    }
+
+}
