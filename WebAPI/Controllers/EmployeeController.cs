@@ -26,6 +26,7 @@ namespace WebAPI.Controllers
             return Ok(data);
         }
 
+        [Authorize(Policy = "ControllerAccess")]
         [HttpGet ("{id}")]
         public async Task<IActionResult> GetByID(string id)
         {
@@ -33,6 +34,7 @@ namespace WebAPI.Controllers
             return Ok(data);
         }
 
+        [Authorize(Policy = "ControllerAccess")]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] EmployeeInfoRequest employee)
         {
@@ -40,6 +42,7 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "ControllerAccess")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id,[FromBody] EmployeeInfoRequest employeeInfoRequest)
         {
@@ -47,6 +50,7 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "ControllerAccess")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {

@@ -1,5 +1,6 @@
 ﻿using ApplicationLayer.IRepository;
 using ApplicationLayer.RequestModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,6 +19,7 @@ namespace WebAPI.Controllers
             this.education = education;
         }
 
+        [Authorize(Policy = "ControllerAccess")]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -25,6 +27,7 @@ namespace WebAPI.Controllers
             return Ok(data);
         }
 
+        [Authorize(Policy = "ControllerAccess")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByID(string id)
         {
@@ -32,6 +35,7 @@ namespace WebAPI.Controllers
             return Ok(data);
         }
 
+        [Authorize(Policy = "ControllerAccess")]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] EducationRequest educationRequest)
         {
@@ -39,6 +43,7 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "ControllerAccess")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] EducationRequest educationRequest)
         {
@@ -46,6 +51,7 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "ControllerAccess")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {

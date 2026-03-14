@@ -1,5 +1,6 @@
 ﻿using ApplicationLayer.IRepository;
 using ApplicationLayer.RequestModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace WebAPI.Controllers
             this.rolePermission = rolePermission;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] RolePermissionRequest rolePermissionRequest)
         {

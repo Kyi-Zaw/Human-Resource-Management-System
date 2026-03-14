@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -15,6 +16,7 @@ namespace WebAPI.Controllers
             _env = env;
         }
 
+        [Authorize(Policy = "ControllerAccess")]
         [HttpPost("save/{moduleFolder}")]
         public async Task<IActionResult> UploadExcel(string moduleFolder,IFormFile file)
         {
@@ -31,6 +33,7 @@ namespace WebAPI.Controllers
             return Ok(new { Message = "Upload Successfully", FileName = file.FileName });
         }
 
+        [Authorize(Policy = "ControllerAccess")]
         [HttpGet("download/{fileName}")]
         public IActionResult DownloadFile(string fileName)
         {

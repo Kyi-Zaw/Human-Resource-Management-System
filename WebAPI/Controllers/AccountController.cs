@@ -1,5 +1,6 @@
 ﻿using ApplicationLayer.IRepository;
 using ApplicationLayer.RequestModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace WebAPI.Controllers
             _userAccount = userAccount;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("CreateAccount")]
         public async Task<IActionResult> CreateAccount([FromBody] UserRequest userDto)
         {
