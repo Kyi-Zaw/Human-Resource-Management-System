@@ -4,6 +4,7 @@ using InfrastructorLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InfrastructorLayer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260314083031_ChangeColumnUserIDToRoleID")]
+    partial class ChangeColumnUserIDToRoleID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,9 +207,9 @@ namespace InfrastructorLayer.Migrations
                     b.ToTable("PostInfo");
                 });
 
-            modelBuilder.Entity("DomainLayer.Entities.RolePermissions", b =>
+            modelBuilder.Entity("DomainLayer.Entities.UserPermissions", b =>
                 {
-                    b.Property<string>("RolePermissionID")
+                    b.Property<string>("UserPermissionID")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("ControllerName")
@@ -216,13 +219,13 @@ namespace InfrastructorLayer.Migrations
                     b.Property<bool>("IsAllowed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("RoleName")
+                    b.Property<string>("RoleID")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("RolePermissionID");
+                    b.HasKey("UserPermissionID");
 
-                    b.ToTable("RolePermissions");
+                    b.ToTable("UserPermissions");
                 });
 
             modelBuilder.Entity("InfrastructorLayer.Data.ApplicationUser", b =>

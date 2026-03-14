@@ -3,9 +3,11 @@ using ApplicationLayer.Services;
 using InfrastructorLayer.Data;
 using InfrastructorLayer.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
+using Web.Api.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +57,15 @@ builder.Services.AddSwaggerGen(o =>
 
     o.OperationFilter<Swashbuckle.AspNetCore.Filters.SecurityRequirementsOperationFilter>();
 });
+
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ControllerAccess", policy =>
+        policy.Requirements.Add(new ControllerAccessRequirement()));
+});
+
+builder.Services.AddScoped<IAuthorizationHandler, ControllerAccessHandler>();
 
 
 

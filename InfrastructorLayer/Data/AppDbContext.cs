@@ -5,7 +5,7 @@ namespace InfrastructorLayer.Data;
 
 public class AppDbContext(DbContextOptions option) : IdentityDbContext<ApplicationUser>(option)
 {
-   
+    public DbSet<RolePermissions> RolePermissions { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<PostInfo> PostInfo { get; set; }
     public DbSet<EducationHeader> EducationHeader { get; set; }

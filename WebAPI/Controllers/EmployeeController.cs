@@ -1,6 +1,7 @@
 ﻿using ApplicationLayer.DTOs;
 using ApplicationLayer.IRepository;
 using ApplicationLayer.RequestModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,7 +18,7 @@ namespace WebAPI.Controllers
         {
             this.employee = employee;
         }
-
+        [Authorize(Policy = "ControllerAccess")]
         [HttpGet]
         public async Task<IActionResult> Get()
         {

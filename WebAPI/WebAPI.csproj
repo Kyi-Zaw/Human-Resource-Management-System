@@ -27,6 +27,7 @@
   <ItemGroup>
     <Folder Include="Files\" />
     <Folder Include="Files\Employee\" />
+    <Folder Include="Authorization\" />
   </ItemGroup>
 
 </Project>
