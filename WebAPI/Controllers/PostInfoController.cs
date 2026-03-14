@@ -2,6 +2,7 @@
 using ApplicationLayer.IRepository;
 using ApplicationLayer.RequestModel;
 using ApplicationLayer.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,35 +19,35 @@ namespace WebAPI.Controllers
         {
             this.postInfo = postInfo;
         }
-
+        [Authorize(Policy = "ControllerAccess")]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             var data = await postInfo.GetAllAsync();
             return Ok(data);
         }
-
+        [Authorize(Policy = "ControllerAccess")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByID(string id)
         {
             var data = await postInfo.GetByIDAsync(id);
             return Ok(data);
         }
-
+        [Authorize(Policy = "ControllerAccess")]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] PostInfoRequest postInfoRequest)
         {
             var result = await this.postInfo.AddAsync(postInfoRequest);
             return Ok(result);
         }
-
+        [Authorize(Policy = "ControllerAccess")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id,[FromBody] PostInfoRequest postInfoRequest)
         {
             var result = await this.postInfo.UpdateAsync(id, postInfoRequest);
             return Ok(result);
         }
-
+        [Authorize(Policy = "ControllerAccess")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
