@@ -1,4 +1,6 @@
 ﻿@page "/education"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @inject IEmployeeService emp
 @inject IJSRuntime JS
 @inject IFileUploadService fileUploadService

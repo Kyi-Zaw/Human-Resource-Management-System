@@ -1,8 +1,11 @@
 ﻿@page "/employee"
+@attribute [Authorize]
 @using ApplicationLayer.DTOs
 @using ApplicationLayer.RequestModel
 @using ApplicationLayer.Services
 @using DomainLayer.Entities;
+
+@using Microsoft.AspNetCore.Authorization
 @using NetcodeHub.Packages.Components.Validations.OnInput;
 @using NetcodeHub.Packages.Components.Toast;
 @using Web.WebComponent;
