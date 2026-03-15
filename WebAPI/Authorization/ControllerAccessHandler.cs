@@ -17,7 +17,7 @@ namespace Web.Api.Authorization
         protected override async Task HandleRequirementAsync(
             AuthorizationHandlerContext context, ControllerAccessRequirement requirement)
         {
-            var roleID = context.User.FindFirst(ClaimTypes.Role)?.Value;
+            var roleID = context.User.Claims.FirstOrDefault(x=>x.Type ==ClaimTypes.Role)?.Value;
            
 
             if (string.IsNullOrEmpty(roleID))

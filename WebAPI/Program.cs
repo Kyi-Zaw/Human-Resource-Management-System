@@ -62,7 +62,7 @@ builder.Services.AddSwaggerGen(o =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ControllerAccess", policy =>
-        policy.Requirements.Add(new ControllerAccessRequirement()));
+        policy.Requirements.Add(new ControllerAccessRequirement()) );
 });
 
 builder.Services.AddScoped<IAuthorizationHandler, ControllerAccessHandler>();
@@ -93,7 +93,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

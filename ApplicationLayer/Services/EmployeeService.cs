@@ -11,9 +11,9 @@ namespace ApplicationLayer.Services
     {
         private readonly HttpClient httpClient;
 
-        public EmployeeService(HttpClient httpClient)
+        public EmployeeService(IHttpClientFactory httpClient)
         {
-            this.httpClient = httpClient;
+            this.httpClient = httpClient.CreateClient("API");
         }
         public async Task<ServiceResponse> AddAsync(EmployeeInfoRequest employeeInfoRequest)
         {

@@ -1,8 +1,13 @@
 ﻿@page "/login"
 @using System.ComponentModel.DataAnnotations
+@using ApplicationLayer.IRepository
 @using ApplicationLayer.RequestModel
+@using Microsoft.AspNetCore.Components.Authorization
+@using Web.Authentication
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
+@inject IUserAccount accountService
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Login</PageTitle>
 
@@ -76,15 +81,18 @@
     private async Task HandleLogin()
     {
         isLoading = true;
-        StateHasChanged();
+        var (flag, token, message) = await accountService.Login(loginModel);
 
         try
         {
-            await Task.Delay(2000);
-
-
-            Navigation.NavigateTo("/");
-            await JSRuntime.InvokeVoidAsync("alert", "Login successful! 🎉");
+            if (flag)
+            {
+                var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+                await customAuthStateProvider.UpdateAuthenticationState(token);
+                Navigation.NavigateTo("/", forceLoad: true);
+                await JSRuntime.InvokeVoidAsync("alert", "Login successful! 🎉");
+            }
+          
         }
         catch (Exception ex)
         {

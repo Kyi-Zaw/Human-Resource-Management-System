@@ -16,9 +16,9 @@ namespace ApplicationLayer.Services
     {
         private readonly HttpClient httpClient;
 
-        public PostInfoService(HttpClient httpClient)
+        public PostInfoService(IHttpClientFactory httpClient)
         {
-            this.httpClient = httpClient;
+            this.httpClient = httpClient.CreateClient("API");
         }
         public async Task<ServiceResponse> AddAsync(PostInfoRequest postInfoRequest)
         {

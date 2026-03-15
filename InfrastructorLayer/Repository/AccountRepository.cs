@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -86,6 +87,9 @@ namespace InfrastructorLayer.Repository
 
         private string GenerateJwtToken(ApplicationUser user, string role)
         {
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
+
             var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
             var key = System.Text.Encoding.ASCII.GetBytes(config["Jwt:Key"] ?? throw new InvalidOperationException("Jwt Key Not Found"));
             var tokenDescriptor = new Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor
