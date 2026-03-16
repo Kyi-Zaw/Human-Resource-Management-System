@@ -11,71 +11,83 @@
    
 </div>
 
-<div class="table-responsive">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                @if (ShowRowNumber)
-                {
-                    <th>#</th>
-                }
 
-                @foreach (var column in Columns)
-                {
-                    <th @onclick="() => SortBy(column.PropertyName)">
-                        @column.Title
-                        @if (SortColumn == column.PropertyName)
-                        {
-                            <span>@(SortAscending ? "▲" : "▼")</span>
-                        }
-                    </th>
-                }
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">@ListingName</h3>
+    </div>
 
-                @if (EnableActions)
-                {
-                    <th>Actions</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in PagedItems.Select((value, index) => new { value, index }))
-            {
-                <tr>
+
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>               
                     @if (ShowRowNumber)
                     {
-                        <td>@((CurrentPage - 1) * PageSize + item.index + 1)</td>
+                        <th>#</th>
                     }
 
                     @foreach (var column in Columns)
                     {
-                        <td>@column.CellTemplate(item.value)</td>
+                        <th @onclick="() => SortBy(column.PropertyName)">
+                            @column.Title
+                            @if (SortColumn == column.PropertyName)
+                            {
+                                <span>@(SortAscending ? "▲" : "▼")</span>
+                            }
+                        </th>
                     }
 
                     @if (EnableActions)
                     {
-                        <td>
-                            @if (OnEdit.HasDelegate)
-                            {
-                                <button class="btn btn-sm btn-warning me-2" @onclick="() => OnEdit.InvokeAsync(item.value)">Edit</button>
-                            }
-                            @if (OnDelete.HasDelegate)
-                            {
-                                <button class="btn btn-sm btn-danger" @onclick="() => OnDelete.InvokeAsync(item.value)">Delete</button>
-                            }
-                        </td>
+                        <th>Actions</th>
                     }
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
 
-@if (TotalPages > 1)
-{
-    <nav>
-        <ul class="pagination">
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in PagedItems.Select((value, index) => new { value, index }))
+                {
+                    <tr>
+                        @if (ShowRowNumber)
+                        {
+                            <td>@((CurrentPage - 1) * PageSize + item.index + 1)</td>
+                        }
+
+                        @foreach (var column in Columns)
+                        {
+                            <td>@column.CellTemplate(item.value)</td>
+                        }
+
+                        @if (EnableActions)
+                        {
+                            <td>
+                                @if (OnEdit.HasDelegate)
+                                {
+                                    <a class="btn btn-info btn-sm" @onclick="() => OnEdit.InvokeAsync(item.value)">
+                                        <i class="fas fa-pencil-alt">
+                                        </i>
+                                        Edit
+                                    </a>
+                                    @* <button class="btn btn-sm btn-warning me-2" @onclick="() => OnEdit.InvokeAsync(item.value)">Edit</button> *@
+                                }
+                                @if (OnDelete.HasDelegate)
+                                {
+                                    <button class="btn btn-sm btn-danger" @onclick="() => OnDelete.InvokeAsync(item.value)">Delete</button>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="card-footer clearfix">
+        <ul class="pagination pagination-sm m-0 float-right">
             <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
-                <button class="page-link" @onclick="()=>ChangePage(CurrentPage-1)">Previous</button>
+                <button class="page-link" @onclick="()=>ChangePage(CurrentPage-1)">&laquo;</button>
             </li>
             @for (int i = 1; i <= TotalPages; i++)
             {
@@ -86,16 +98,20 @@
                 </li>
             }
             <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
-                <button class="page-link" @onclick="()=>ChangePage(CurrentPage+1)">Next</button>
+                <button class="page-link" @onclick="()=>ChangePage(CurrentPage+1)">&raquo;</button>
             </li>
+
         </ul>
-    </nav>
-}
+    </div>
+
+</div>
+
 
 @code {
     [Parameter] public IEnumerable<TItem> Items { get; set; } = new List<TItem>();
     [Parameter] public List<ColumnDefinition<TItem>> Columns { get; set; } = new();
     [Parameter] public int PageSize { get; set; } = 5;
+    [Parameter] public string ListingName { get; set; } = "Listing";
     [Parameter] public bool ShowRowNumber { get; set; } = true;
     [Parameter] public bool EnableSearch { get; set; } = true;
     [Parameter] public bool EnableActions { get; set; } = true;
