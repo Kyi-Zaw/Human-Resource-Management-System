@@ -1,20 +1,27 @@
 ﻿@typeparam TItem
 
-<div class="mb-2">
-    <div class="col-lg-4">
-        @if (EnableSearch)
-        {
-            <input type="text" class="form-control" placeholder="Search..."
-                   @bind="SearchText" @bind:event="oninput" width="20%" />
-        }
-    </div>
-   
-</div>
 
 
 <div class="card">
+
+
     <div class="card-header">
         <h3 class="card-title">@ListingName</h3>
+
+        @if (EnableSearch)
+        {
+            <div class="card-tools">
+                <div class="input-group input-group-sm" style="width: 300px;">
+
+                    <input type="text" class="form-control" placeholder="Search..."
+                           @bind="SearchText" @bind:event="oninput" width="20%" />
+
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 
 
