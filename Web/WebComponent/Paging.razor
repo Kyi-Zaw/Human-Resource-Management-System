@@ -61,19 +61,23 @@
 
                         @if (EnableActions)
                         {
-                            <td>
+                            <td class="project-actions">
                                 @if (OnEdit.HasDelegate)
                                 {
-                                    <a class="btn btn-info btn-sm" @onclick="() => OnEdit.InvokeAsync(item.value)">
+                                    <a class="btn btn-info btn-sm me-2" @onclick="() => OnEdit.InvokeAsync(item.value)">
                                         <i class="fas fa-pencil-alt">
                                         </i>
                                         Edit
                                     </a>
-                                    @* <button class="btn btn-sm btn-warning me-2" @onclick="() => OnEdit.InvokeAsync(item.value)">Edit</button> *@
+                                    
                                 }
                                 @if (OnDelete.HasDelegate)
                                 {
-                                    <button class="btn btn-sm btn-danger" @onclick="() => OnDelete.InvokeAsync(item.value)">Delete</button>
+                                    <a class="btn btn-danger btn-sm" @onclick="() => OnDelete.InvokeAsync(item.value)">
+                                        <i class="fas fa-trash">
+                                        </i>
+                                        Delete
+                                    </a>
                                 }
                             </td>
                         }
@@ -85,7 +89,7 @@
 
 
     <div class="card-footer clearfix">
-        <ul class="pagination pagination-sm m-0 float-right">
+        <ul class="pagination pagination-sm m-0 float-left">
             <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
                 <button class="page-link" @onclick="()=>ChangePage(CurrentPage-1)">&laquo;</button>
             </li>
