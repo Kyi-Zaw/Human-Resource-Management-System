@@ -47,5 +47,14 @@ namespace Web.Authentication
             }
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
         }
+
+        public async Task Logout()
+        {
+            await localStorageService.RemoveItemAsync("token");
+
+            NotifyAuthenticationStateChanged(
+                Task.FromResult(new AuthenticationState(anonymous))
+            );
+        }
     } 
 }
