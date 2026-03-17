@@ -13,9 +13,18 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="css/Login.css" rel="stylesheet">
     <script src="download.js"></script>
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="AdminLTE/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="AdminLTE/dist/css/adminlte.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!--<link rel="stylesheet" href="css/Site.css" />-->
+
+
 </head>
 
-<body>
+<body class="hold-transition sidebar-mini">
     <script>
         window.showAlert = function (icon, title, message) {
             Swal.fire({
@@ -38,6 +47,57 @@
             });
         }
 
+        //window.initAdminLTE = () => {
+        //    if ($('.main-header').length === 0) return;
+
+        //    $('[data-widget="treeview"]').Treeview('init');
+        //}
+
+        window.fixAdminLayout = () => {
+            if (window.$ && $('body').Layout) {
+                $('body').Layout('fix');
+            }
+        };
+
+
+
+        window.initAdminLTE = () => {
+
+            // Treeview (sidebar dropdown)
+            //$('[data-widget="treeview"]').Treeview('init');
+
+            // Pushmenu (sidebar toggle)
+            $('[data-widget="pushmenu"]').PushMenu();
+
+            $('[data-widget="treeview"]').Treeview('init');
+
+            const fix = () => {
+                window.dispatchEvent(new Event('resize'));
+            };
+
+            // menu click
+            $(document).on('click', '.nav-link', () => {
+                setTimeout(fix, 150);
+            });
+
+            // sidebar toggle
+            $(document).on('click', '[data-widget="pushmenu"]', () => {
+                setTimeout(fix, 150);
+            });
+
+            // first load
+            setTimeout(fix, 300);
+
+        }
+
+
+        $(document).on('click', '.nav-link', function () {
+            setTimeout(function () {
+                if ($('body').Layout) {
+                    $('body').Layout('fix');
+                }
+            }, 300);
+        });
 
 
     </script>
@@ -56,6 +116,13 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+
+
+    <script src="AdminLTE/plugins/jquery/jquery.min.js"></script>
+    <script src="AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="AdminLTE/dist/js/adminlte.min.js"></script>
+    <!--<script src="AdminLTE/dist/js/demo.js"></script>-->
+
 </body>
 
 </html>
