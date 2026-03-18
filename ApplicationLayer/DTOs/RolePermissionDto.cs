@@ -11,7 +11,17 @@ namespace ApplicationLayer.DTOs
         public string RolePermissionID { get; set; }
         public string RoleName { get; set; }
         public string ControllerName { get; set; }
-        public bool IsAllowed { get; set; }  
+
+        public string MenuName { get; set; }
+        public bool IsAllowed { get; set; }
+
+        public string Url { get; set; }
+        public string Icon { get; set; }
+        public string? ParentId { get; set; }
+
+        public decimal OrderNo { get; set; }
+
+        public List<RolePermissionDto> Children { get; set; } = new();
 
     }
 }

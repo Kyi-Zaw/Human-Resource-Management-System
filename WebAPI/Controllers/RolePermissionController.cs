@@ -3,6 +3,7 @@ using ApplicationLayer.RequestModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace WebAPI.Controllers
 {
@@ -22,6 +23,16 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Add([FromBody] RolePermissionRequest rolePermissionRequest)
         {
             var result = await this.rolePermission.AddAsync(rolePermissionRequest);
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            var result = await this.rolePermission.GetAllAsync(role);
             return Ok(result);
         }
     }

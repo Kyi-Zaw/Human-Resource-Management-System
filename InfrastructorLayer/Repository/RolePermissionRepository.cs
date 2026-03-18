@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,6 +30,11 @@ namespace InfrastructorLayer.Repository
             var entity = new RolePermissions
             {
                 RolePermissionID = Guid.NewGuid().ToString().ToUpper(),
+                MenuName = rolePermissionRequest.MenuName,
+                Url = rolePermissionRequest.Url,
+                Icon = rolePermissionRequest.Icon,
+                ParentId = rolePermissionRequest.Parent,
+                Order = rolePermissionRequest.OrderNo,
                 RoleName = rolePermissionRequest.RoleName,
                 ControllerName = rolePermissionRequest.ControllerName,              
                 IsAllowed = rolePermissionRequest.IsAllowed,
@@ -44,9 +50,57 @@ namespace InfrastructorLayer.Repository
             throw new NotImplementedException();
         }
 
-        public Task<List<RolePermissionDto>> GetAllAsync()
+        public async Task<List<RolePermissionDto>> GetAllAsync(string roleName)
         {
-            throw new NotImplementedException();
+
+            var menus = await appDbContext.RolePermissions
+                .Where(rm => rm.RoleName == roleName)    
+                .OrderBy(rm => rm.Order)
+                .Select(rm => new RolePermissionDto
+                {
+                    RolePermissionID = rm.RolePermissionID,
+                    RoleName = rm.RoleName,
+                    MenuName = rm.MenuName,
+                    ControllerName = rm.ControllerName,
+                    IsAllowed = rm.IsAllowed,
+                    Url = rm.Url,
+                    Icon = rm.Icon,
+                    ParentId = rm.ParentId,
+                    OrderNo = rm.Order,
+                })
+                .ToListAsync();
+            menus = BuildMenuTree(menus);
+            return menus;
+
+
+
+        }
+
+        public List<RolePermissionDto> BuildMenuTree(List<RolePermissionDto> menus)
+        {
+            var lookup = menus.ToLookup(m => m.ParentId);
+
+            List<RolePermissionDto> Build(string? parentId)
+            {
+                return lookup[parentId]
+                    .Select(m => new RolePermissionDto
+                    {
+                        RolePermissionID = m.RolePermissionID,
+                        RoleName = m.RoleName,
+                        ControllerName = m.ControllerName,
+                        MenuName = m.MenuName,
+                        IsAllowed = m.IsAllowed,
+                        Url = m.Url,
+                        Icon = m.Icon,
+                        ParentId = m.ParentId,
+                        OrderNo = m.OrderNo,
+                        Children = Build(m.RolePermissionID)
+                    })
+                    .OrderBy(m => m.OrderNo)
+                    .ToList();
+            }
+
+            return Build(null); // root menu
         }
 
         public Task<RolePermissionDto> GetByIDAsync(string id)

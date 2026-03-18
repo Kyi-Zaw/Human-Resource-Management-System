@@ -1,5 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using ApplicationLayer.DTOs
+@using ApplicationLayer.Services
+@inherits LayoutComponentBase
 @inject IJSRuntime JS
+@inject IRolePermissionService MenuService
 
 <div class="wrapper">
 
@@ -228,6 +231,37 @@
                         </ul>
                     </li>
 
+                    @foreach (var menu in Menus)
+                    {
+                        <li class="nav-item">
+                            <a href="@menu.Url" class="nav-link">
+                                <i class="@menu.Icon"></i>
+                                <p>
+                                    @menu.MenuName
+                                    @if (menu.Children.Any())
+                                    {
+                                        <i class="right fas fa-angle-left"></i>
+                                    }
+                                </p>
+                            </a>
+
+                            @if (menu.Children.Any())
+                            {
+                                <ul class="nav nav-treeview">
+                                    @foreach (var child in menu.Children)
+                                    {
+                                        <li class="nav-item">
+                                            <a href="@child.Url" class="nav-link">
+                                                <i class="@child.Icon"></i>
+                                                <p>@child.MenuName</p>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </li>
+                    }
+
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->
@@ -269,6 +303,14 @@
             await JS.InvokeVoidAsync("initAdminLTE");
             await JS.InvokeVoidAsync("fixAdminLayout");
         }
+    }
+
+    List<RolePermissionDto> Menus = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var flatMenus = await MenuService.GetAllAsync();
+        Menus = (flatMenus);
     }
 
 
