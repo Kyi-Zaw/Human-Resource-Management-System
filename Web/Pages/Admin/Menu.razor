@@ -1,0 +1,67 @@
+﻿@page "/menu"
+@using ApplicationLayer.DTOs
+@using ApplicationLayer.Services
+@using Microsoft.AspNetCore.Authorization
+@using Web.WebComponent
+@inject IMenu menus
+@attribute [Authorize]
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<div class="card">
+    <div class="card-body">
+        <Treeview Nodes="treeNodes" OnOk="HandleOk" ShowSelectButton=true />
+
+    </div>
+</div>
+
+<input type="text" value="@selectedText" class="form-control" />
+
+
+
+@code {
+
+    List<TreeNode> treeNodes = new();
+
+    string selectedText = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var menu = await menus.GetAllAsync(); 
+
+
+        treeNodes = MapToTreeNode(menu);
+    }
+
+
+
+    void HandleOk(List<TreeNode> checkedNodes)
+    {
+        foreach (var item in checkedNodes)
+        {
+            selectedText = string.Join(", ", checkedNodes.Select(x => x.Description));
+        }
+    }
+
+
+    List<TreeNode> MapToTreeNode(List<MenuDto> menus)
+    {
+        return menus.Select(menu => new TreeNode
+        {
+            ID = menu.MenuID,
+            Code = menu.ControllerName,
+            Description = menu.MenuName,
+            ParentID = menu.ParentId,
+            Children = menu.Children != null && menu.Children.Any()
+                ? MapToTreeNode(menu.Children)
+                : new List<TreeNode>()
+        }).ToList();
+    }
+
+   
+
+  
+
+}

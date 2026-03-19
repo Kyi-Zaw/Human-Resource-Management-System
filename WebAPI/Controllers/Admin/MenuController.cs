@@ -27,7 +27,6 @@ namespace WebAPI.Controllers.Admin
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("GetAllAsyncByRole")]
         public async Task<IActionResult> GetAllAsyncByRole()
         {

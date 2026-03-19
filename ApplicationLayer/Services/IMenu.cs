@@ -17,7 +17,7 @@ namespace ApplicationLayer.Services
 
         Task<List<MenuDto>> GetAllAsync();
 
-        Task<List<MenuDto>> GetAllAsyncByRole(string? roleName);
+        Task<List<MenuDto>> GetAllAsyncByRole();
         Task<MenuDto> GetByIDAsync(string id);
     }
 }

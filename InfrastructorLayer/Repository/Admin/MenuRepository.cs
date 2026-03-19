@@ -17,7 +17,7 @@ namespace InfrastructorLayer.Repository.Admin
         }
         public async Task<ServiceResponse> AddAsync(MenuRequest menuRequest)
         {
-           
+
 
 
             var entity = new Menu
@@ -44,19 +44,22 @@ namespace InfrastructorLayer.Repository.Admin
         public async Task<List<MenuDto>> GetAllAsyncByRole(string roleName)
         {
 
-            var menus = await appDbContext.RolePermissions
-                .Where(rm => rm.RoleName == roleName)
-                .OrderBy(rm => rm.Order)
-                .Select(rm => new MenuDto
-                {
-                    MenuID = rm.RolePermissionID,
-                    MenuName = rm.MenuName,
-                    ControllerName = rm.ControllerName,
-                    Url = rm.Url,
-                    Icon = rm.Icon,
-                    ParentId = rm.ParentId,
-                    SeniorOrderNo = rm.Order,
-                })
+            var menus = await (
+                             from rp in appDbContext.RolePermissions
+                             join m in appDbContext.Menus
+                                 on rp.MenuID equals m.MenuID
+                             where rp.RoleName == roleName
+                             select m   // 👈 Menu တန်းယူ
+                         ).Select(rm => new MenuDto
+                         {
+                             MenuID = rm.MenuID,
+                             MenuName = rm.MenuName,
+                             ControllerName = rm.ControllerName,
+                             Url = rm.Url,
+                             Icon = rm.Icon,
+                             ParentId = rm.ParentId,
+                             SeniorOrderNo = rm.SeniorOrderNo,
+                         })
                 .ToListAsync();
             menus = BuildMenuTree(menus);
             return menus;
@@ -105,7 +108,7 @@ namespace InfrastructorLayer.Repository.Admin
                     .ToList();
             }
 
-            return Build(null); 
+            return Build(null);
         }
 
         public Task<MenuDto> GetByIDAsync(string id)

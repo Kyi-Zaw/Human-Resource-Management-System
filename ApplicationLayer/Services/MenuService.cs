@@ -32,9 +32,10 @@ namespace ApplicationLayer.Services
             return await httpClient.GetFromJsonAsync<List<MenuDto>>("api/menu/getallasync")!;
         }
 
-        public Task<List<MenuDto>> GetAllAsyncByRole(string? roleName)
+        public async Task<List<MenuDto>> GetAllAsyncByRole()
         {
-            throw new NotImplementedException();
+            return await httpClient.GetFromJsonAsync<List<MenuDto>>("api/menu/getallasyncbyrole")!;
+
         }
 
         public Task<MenuDto> GetByIDAsync(string id)

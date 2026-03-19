@@ -17,8 +17,8 @@ namespace Web.Api.Authorization
         protected override async Task HandleRequirementAsync(
             AuthorizationHandlerContext context, ControllerAccessRequirement requirement)
         {
-            var roleID = context.User.Claims.FirstOrDefault(x=>x.Type ==ClaimTypes.Role)?.Value;
-           
+            var roleID = context.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+
 
             if (string.IsNullOrEmpty(roleID))
             {
@@ -47,10 +47,20 @@ namespace Web.Api.Authorization
                 return;
             }
 
-            var permission = await _context.RolePermissions
-                .FirstOrDefaultAsync(p => p.RoleName== roleID && p.ControllerName == controllerName );
+            var permission = await (
+                                    from rp in _context.RolePermissions
+                                    join m in _context.Menus
+                                        on rp.MenuID equals m.MenuID
+                                    where rp.RoleName == roleID
+                                       && m.ControllerName == controllerName  
+                                    select new
+                                    {
+                                        RolePermission = rp,
+                                        Menu = m,
+                                    }
+                                ).FirstOrDefaultAsync();
 
-            if (permission != null && permission.IsAllowed)
+            if (permission != null && permission.RolePermission.IsAllowed)
             {
                 context.Succeed(requirement);
 
