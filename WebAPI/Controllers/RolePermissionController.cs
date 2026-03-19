@@ -19,7 +19,7 @@ namespace WebAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<IActionResult> Add([FromBody] RolePermissionRequest rolePermissionRequest)
         {
             var result = await this.rolePermission.AddAsync(rolePermissionRequest);
@@ -27,12 +27,20 @@ namespace WebAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        [HttpGet("GetAllAsyncByRole")]
+        public async Task<IActionResult> GetAllAsyncByRole()
         {
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
-            var result = await this.rolePermission.GetAllAsync(role);
+            var result = await this.rolePermission.GetAllAsyncByRole(role);
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetAllAsync")]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var result = await this.rolePermission.GetAllAsync();
             return Ok(result);
         }
     }

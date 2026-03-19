@@ -309,7 +309,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var flatMenus = await MenuService.GetAllAsync();
+        var flatMenus = await MenuService.GetAllAsyncByRole();
         Menus = (flatMenus);
     }
 

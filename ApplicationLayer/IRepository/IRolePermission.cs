@@ -16,7 +16,9 @@ namespace ApplicationLayer.IRepository
 
         Task<ServiceResponse> DeleteAsync(string id);
 
-        Task<List<RolePermissionDto>> GetAllAsync(string? roleName);
+        Task<List<RolePermissionDto>> GetAllAsync();
+
+        Task<List<RolePermissionDto>> GetAllAsyncByRole(string? roleName);
         Task<RolePermissionDto> GetByIDAsync(string id);
     }
 }

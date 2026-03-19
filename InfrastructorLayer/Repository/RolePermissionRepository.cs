@@ -50,11 +50,34 @@ namespace InfrastructorLayer.Repository
             throw new NotImplementedException();
         }
 
-        public async Task<List<RolePermissionDto>> GetAllAsync(string roleName)
+        public async Task<List<RolePermissionDto>> GetAllAsyncByRole(string roleName)
         {
 
             var menus = await appDbContext.RolePermissions
                 .Where(rm => rm.RoleName == roleName)    
+                .OrderBy(rm => rm.Order)
+                .Select(rm => new RolePermissionDto
+                {
+                    RolePermissionID = rm.RolePermissionID,
+                    RoleName = rm.RoleName,
+                    MenuName = rm.MenuName,
+                    ControllerName = rm.ControllerName,
+                    IsAllowed = rm.IsAllowed,
+                    Url = rm.Url,
+                    Icon = rm.Icon,
+                    ParentId = rm.ParentId,
+                    OrderNo = rm.Order,
+                })
+                .ToListAsync();
+            menus = BuildMenuTree(menus);
+            return menus;
+        }
+
+
+        public async Task<List<RolePermissionDto>> GetAllAsync()
+        {
+
+            var menus = await appDbContext.RolePermissions
                 .OrderBy(rm => rm.Order)
                 .Select(rm => new RolePermissionDto
                 {
