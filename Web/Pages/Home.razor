@@ -9,11 +9,8 @@ Welcome to your new app.
 
 <div class="card">
     <div class="card-body">
-        <Web.WebComponent.Treeview Nodes="treeData" />
+        <Web.WebComponent.Treeview Nodes="treeData" OnOk="HandleOk" ShowSelectButton=true/>
 
-        <button class="btn btn-primary" @onclick="OnShowSelected">
-            Show Selected
-        </button>
     </div>
 </div>
 
@@ -55,34 +52,16 @@ Welcome to your new app.
         }
     };
 
-
-    void OnShowSelected()
+    void HandleOk(List<TreeNode> checkedNodes)
     {
-        var checkedNodes = GetCheckedNodes(treeData);
-
-        selectedText = string.Join(", ", checkedNodes.Select(x => x.Description));
-    }
-
-    List<TreeNode> GetCheckedNodes(List<TreeNode> nodes)
-    {
-        var result = new List<TreeNode>();
-
-        foreach (var node in nodes)
+        foreach (var item in checkedNodes)
         {
-            if (node.IsChecked)
-                result.Add(node);
-
-            if (node.Children.Any())
-                result.AddRange(GetCheckedNodes(node.Children));
+            selectedText = string.Join(", ", checkedNodes.Select(x => x.Description));
         }
-
-        return result;
     }
 
+   
 
-    void OnNodeSelected(TreeNode node)
-    {
-        Console.WriteLine($"Selected: {node.Description} = {node.IsChecked}");
-    }
+  
 
 }

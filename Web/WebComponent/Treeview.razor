@@ -23,11 +23,19 @@
 
             @if (node.IsExpanded && node.Children.Any())
             {
-                <Treeview Nodes="node.Children" />
+                <Treeview Nodes="node.Children" ShowSelectButton=false/>
             }
         </li>
     }
 </ul>
+
+@if (ShowSelectButton)
+{
+    <button class="btn btn-primary mt-2" @onclick="OnOkClick">
+        select
+    </button>
+}
+
 
 <style>
     .tree {
@@ -80,13 +88,40 @@
 @code {
     [Parameter]
     public List<TreeNode> Nodes { get; set; }
+    [Parameter]
+    public EventCallback<List<TreeNode>> OnOk { get; set; }
+
+    [Parameter]
+    public bool ShowSelectButton { get; set; }
 
     void Toggle(TreeNode node)
     {
         node.IsExpanded = !node.IsExpanded;
     }
 
+    async Task OnOkClick()
+    {
+        var checkedNodes = GetCheckedNodes(Nodes);
 
+        if (OnOk.HasDelegate)
+            await OnOk.InvokeAsync(checkedNodes);
+    }
+
+    List<TreeNode> GetCheckedNodes(List<TreeNode> nodes)
+    {
+        var result = new List<TreeNode>();
+
+        foreach (var node in nodes)
+        {
+            if (node.IsChecked)
+                result.Add(node);
+
+            if (node.Children != null && node.Children.Any())
+                result.AddRange(GetCheckedNodes(node.Children));
+        }
+
+        return result;
+    }
 
    
 }
