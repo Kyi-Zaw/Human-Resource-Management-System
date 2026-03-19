@@ -1,7 +1,9 @@
 using ApplicationLayer.IRepository;
+using ApplicationLayer.RequestModel.Admin;
 using ApplicationLayer.Services;
 using InfrastructorLayer.Data;
 using InfrastructorLayer.Repository;
+using InfrastructorLayer.Repository.Admin;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -74,6 +76,8 @@ builder.Services.AddScoped<IPostInfo, PostInfoRepository>();
 builder.Services.AddScoped<IEducation, EducationRepository>();
 builder.Services.AddScoped<IUserAccount, AccountRepository>();
 builder.Services.AddScoped<IRolePermission, RolePermissionRepository>();
+builder.Services.AddScoped<ApplicationLayer.IRepository.IMenu, MenuRepository>();
+
 
 
 var app = builder.Build();

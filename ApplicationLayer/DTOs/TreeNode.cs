@@ -1,4 +1,4 @@
-﻿namespace Web.WebComponent
+﻿namespace ApplicationLayer.DTOs
 {
     public class TreeNode
     {

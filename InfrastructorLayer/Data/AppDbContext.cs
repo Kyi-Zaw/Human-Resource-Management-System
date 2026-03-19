@@ -11,6 +11,8 @@ public class AppDbContext(DbContextOptions option) : IdentityDbContext<Applicati
     public DbSet<EducationHeader> EducationHeader { get; set; }
     public DbSet<EducationHeader> EducationEducationItem { get; set; }
 
+    public DbSet<Menu> Menus { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
