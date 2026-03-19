@@ -3,6 +3,9 @@
 @inherits LayoutComponentBase
 @inject IJSRuntime JS
 @inject IRolePermissionService MenuService
+@inject NavigationManager Navigation
+
+
 
 <div class="wrapper">
 
@@ -274,8 +277,18 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var flatMenus = await MenuService.GetAllAsyncByRole();
-        Menus = (flatMenus);
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            var flatMenus = await MenuService.GetAllAsyncByRole();
+            Menus = (flatMenus);
+        }
+
+       
+
     }
 
 
