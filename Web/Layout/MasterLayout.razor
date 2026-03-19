@@ -177,60 +177,6 @@
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-
-
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon far fa-plus-square"></i>
-                            <p>
-                                Employee
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>
-                                        CodeSetup
-                                        <i class="fas fa-angle-left right"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="/postinfo" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Position</p>
-                                        </a>
-                                    </li>                                  
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>
-                                        Employe Information
-                                        <i class="fas fa-angle-left right"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="/employee" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Employee</p>
-                                        </a>
-                                    </li>   
-                                    <li class="nav-item">
-                                        <a href="/education" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Education</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>                         
-                        </ul>
-                    </li>
-
                     @foreach (var menu in Menus)
                     {
                         <li class="nav-item">
@@ -247,6 +193,7 @@
 
                             @if (menu.Children.Any())
                             {
+
                                 <ul class="nav nav-treeview">
                                     @foreach (var child in menu.Children)
                                     {
@@ -254,7 +201,25 @@
                                             <a href="@child.Url" class="nav-link">
                                                 <i class="@child.Icon"></i>
                                                 <p>@child.MenuName</p>
+                                                @if (child.Children.Any())
+                                                {
+                                                    <i class="right fas fa-angle-left"></i>
+                                                }
                                             </a>
+                                            @if (child.Children.Any())
+                                            {
+                                                <ul class="nav nav-treeview">
+                                                    @foreach (var ch in child.Children)
+                                                    {
+                                                        <li class="nav-item">
+                                                            <a href="@ch.Url" class="nav-link">
+                                                                <i class="@ch.Icon"></i>
+                                                                <p>@ch.MenuName</p>
+                                                            </a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
                                         </li>
                                     }
                                 </ul>
