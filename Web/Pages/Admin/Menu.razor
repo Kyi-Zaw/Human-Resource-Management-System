@@ -1,7 +1,9 @@
 ﻿@page "/menu"
 @using ApplicationLayer.DTOs
+@using ApplicationLayer.RequestModel.Admin
 @using ApplicationLayer.Services
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
 @using Web.WebComponent
 @inject IMenu menus
 @attribute [Authorize]
@@ -10,28 +12,86 @@
 
 Welcome to your new app.
 
-<div class="card">
-    <div class="card-body">
-        <Treeview Nodes="treeNodes" OnOk="HandleOk" ShowSelectButton=true />
+<div class="row">
+    <!-- left column -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <Treeview Nodes="treeNodes" OnOk="HandleOk" ShowSelectButton=true />
 
+            </div>
+            <div>
+                <button class="btn btn-primary mt-2" @onclick="AddChildClick">AddChild </button>
+                <button class="btn btn-primary mt-2" @onclick="AddParentClick">AddParent </button>
+
+            </div>
+        </div>
+
+        <input type="text" value="@selectedText" class="form-control" />
+
+    </div>
+
+    <div class="col-md-6">
+        <div class="card card-primary">
+            
+            <!-- /.card-header -->
+            <!-- form start -->
+            <EditForm Model="menuDto" OnValidSubmit="HandleSubmit">
+
+                <div class="card-header">
+                    <h3 class="card-title">Quick Example</h3>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="form-group">
+                        <InputText class="form-control" @bind-Value="menuDto.Parent" placeholder="Enter ParentID"/>
+                    </div>
+
+                    <div class="form-group">
+                        <InputText class="form-control" @bind-Value="menuDto.MenuName" placeholder="Enter Menu Name" />
+                    </div>
+
+                    <div class="form-group">
+                        <InputText class="form-control" @bind-Value="menuDto.ControllerName" placeholder="Enter Controller Name" />
+                    </div>
+
+                    <div class="form-group">
+                        <InputText class="form-control" @bind-Value="menuDto.Icon" placeholder="Enter Icon" />
+                    </div>
+
+                    <div class="form-group">
+                        <InputText class="form-control" @bind-Value="menuDto.Url" placeholder="Enter Url" />
+                    </div>
+
+                    <div class="form-group">
+                        <InputNumber class="form-control" @bind-Value="menuDto.OrderNo" placeholder="Enter Order No" />
+                    </div>
+
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </EditForm>
+        </div>
     </div>
 </div>
 
-<input type="text" value="@selectedText" class="form-control" />
 
 
 
 @code {
 
     List<TreeNode> treeNodes = new();
+    string parentID = "";
+    MenuRequest menuDto = new MenuRequest();
 
     string selectedText = "";
 
     protected override async Task OnInitializedAsync()
     {
-        var menu = await menus.GetAllAsync(); 
-
-
+        var menu = await menus.GetAllAsync();
         treeNodes = MapToTreeNode(menu);
     }
 
@@ -41,8 +101,30 @@ Welcome to your new app.
     {
         foreach (var item in checkedNodes)
         {
-            selectedText = string.Join(", ", checkedNodes.Select(x => x.Description));
+            parentID = string.Join(", ", checkedNodes.Select(x => x.ID));
         }
+    }
+
+    void AddParentClick()
+    {
+        menuDto.Parent = null;
+    }
+
+    void AddChildClick()
+    {
+        menuDto.Parent = parentID;
+    }
+
+    async Task HandleSubmit()
+    {
+
+        await menus.AddAsync(menuDto);
+
+        var menu = await menus.GetAllAsync();
+        treeNodes = MapToTreeNode(menu);
+
+        // clear form
+        menuDto = new MenuRequest();
     }
 
 
@@ -60,8 +142,8 @@ Welcome to your new app.
         }).ToList();
     }
 
-   
 
-  
+
+
 
 }

@@ -13,13 +13,11 @@ namespace ApplicationLayer.RequestModel.Admin
         [Required(ErrorMessage = "MenuName is required")]
         public string MenuName { get; set; }
 
-        public string ControllerName { get; set; }
+        public string? ControllerName { get; set; }
 
-       
-        [Required(ErrorMessage = "Url is required")]
-        public string Url { get; set; }
+        public string? Url { get; set; }
 
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
         public int OrderNo { get; set; }
 

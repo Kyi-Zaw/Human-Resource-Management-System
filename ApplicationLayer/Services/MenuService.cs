@@ -1,4 +1,5 @@
 ﻿using ApplicationLayer.DTOs;
+using ApplicationLayer.RequestModel;
 using ApplicationLayer.RequestModel.Admin;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,11 @@ namespace ApplicationLayer.Services
         {
             this.httpClient = httpClient.CreateClient("API");
         }
-        public Task<ServiceResponse> AddAsync(MenuRequest rolePermissionRequest)
+        public async Task<ServiceResponse> AddAsync(MenuRequest menuRequest)
         {
-            throw new NotImplementedException();
+            var data = await httpClient.PostAsJsonAsync("api/menu/add", menuRequest);
+            var response = await data.Content.ReadFromJsonAsync<ServiceResponse>();
+            return response!;
         }
 
         public Task<ServiceResponse> DeleteAsync(string id)
