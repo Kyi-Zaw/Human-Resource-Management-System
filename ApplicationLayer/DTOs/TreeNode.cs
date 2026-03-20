@@ -9,5 +9,7 @@
         public bool IsChecked { get; set; }
         public bool IsExpanded { get; set; }
         public List<TreeNode> Children { get; set; } = new();
+
+        public bool IsSelected { get; set; }
     }
 }

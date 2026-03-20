@@ -41,9 +41,9 @@ namespace ApplicationLayer.Services
 
         }
 
-        public Task<MenuDto> GetByIDAsync(string id)
+        public async Task<MenuDto> GetByIDAsync(string id)
         {
-            throw new NotImplementedException();
+           return await httpClient.GetFromJsonAsync<MenuDto>($"api/menu/getbyid/{id}")!;
         }
 
         public Task<ServiceResponse> UpdateAsync(string id, MenuRequest rolePermissionRequest)

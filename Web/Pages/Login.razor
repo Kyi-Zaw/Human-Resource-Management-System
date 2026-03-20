@@ -91,9 +91,13 @@
                 var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
                 await customAuthStateProvider.UpdateAuthenticationState(token);
                 Navigation.NavigateTo("/home", forceLoad: true);
-                await JSRuntime.InvokeVoidAsync("alert", "Login successful! 🎉");
             }
-          
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Failed! To Login!!!!!!!!!!");
+
+            }
+
         }
         catch (Exception ex)
         {

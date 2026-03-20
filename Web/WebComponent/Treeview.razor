@@ -1,4 +1,5 @@
 ﻿@using ApplicationLayer.DTOs
+
 <ul class="tree">
     @foreach (var node in Nodes)
     {
@@ -16,21 +17,23 @@
                 {
                     <span class="toggle-empty"></span>
                 }
+                @if(@IsShowCheckBox){
+                <input type="checkbox" @bind="node.IsChecked" />
 
-                <input type="checkbox" @bind="node.IsChecked"/>
-
-                <span>@node.Description</span>
+                }
+                <span style="cursor:pointer" class="desc @(node.IsSelected ? "selected" : "")"
+                      @onclick="() => OnNodeClick(node)">@node.Description</span>
             </div>
 
             @if (node.IsExpanded && node.Children.Any())
             {
-                <Treeview Nodes="node.Children" ShowSelectButton=false/>
+                <Treeview Nodes="node.Children" ShowSelectButton=false IsShowCheckBox=false OnNodeSelected="OnNodeClick" />
             }
         </li>
     }
 </ul>
 
-@if (ShowSelectButton)
+@if (ShowSelectButton && IsShowCheckBox)
 {
     <button class="btn btn-primary mt-2" @onclick="OnOkClick">
         select
@@ -84,6 +87,19 @@
         display: inline-block;
         width: 20px;
     }
+
+    .desc.selected {
+        background-color: #cce5ff;
+        border-radius: 4px;
+    }
+
+    .desc.selected {
+        background-color: #0d6efd;
+        color: white;
+        border-radius: 6px;
+        padding: 2px 6px;
+    }
+
 </style>
 
 @code {
@@ -93,7 +109,15 @@
     public EventCallback<List<TreeNode>> OnOk { get; set; }
 
     [Parameter]
+    public EventCallback<TreeNode> OnNodeSelected { get; set; }
+
+    [Parameter]
     public bool ShowSelectButton { get; set; }
+
+    [Parameter]
+    public bool IsShowCheckBox { get; set; }
+
+    TreeNode? SelectedNode;
 
     void Toggle(TreeNode node)
     {
@@ -106,6 +130,14 @@
 
         if (OnOk.HasDelegate)
             await OnOk.InvokeAsync(checkedNodes);
+    }
+
+    async Task OnNodeClick(TreeNode node)
+    {
+        ClearSelection(Nodes);
+        node.IsSelected = true;
+        if (OnNodeSelected.HasDelegate)
+            await OnNodeSelected.InvokeAsync(node);
     }
 
     List<TreeNode> GetCheckedNodes(List<TreeNode> nodes)
@@ -123,6 +155,19 @@
 
         return result;
     }
+
+    void ClearSelection(List<TreeNode> nodes)
+    {
+        foreach (var n in nodes)
+        {
+            n.IsSelected = false;
+
+            if (n.Children != null && n.Children.Any())
+                ClearSelection(n.Children);
+        }
+    }
+
+
 
    
 }

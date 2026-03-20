@@ -4,6 +4,7 @@ using ApplicationLayer.RequestModel.Admin;
 using DomainLayer.Entities;
 using InfrastructorLayer.Data;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 
 namespace InfrastructorLayer.Repository.Admin
@@ -49,7 +50,7 @@ namespace InfrastructorLayer.Repository.Admin
                              join m in appDbContext.Menus
                                  on rp.MenuID equals m.MenuID
                              where rp.RoleName == roleName
-                             select m   // 👈 Menu တန်းယူ
+                             select m  
                          ).Select(rm => new MenuDto
                          {
                              MenuID = rm.MenuID,
@@ -111,12 +112,19 @@ namespace InfrastructorLayer.Repository.Admin
             return Build(null);
         }
 
-        public Task<MenuDto> GetByIDAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<MenuDto> GetByIDAsync(string id) =>
+           await appDbContext.Menus.Where(x => x.MenuID == id).Select(m => new MenuDto
+            {
+               MenuID = m.MenuID,
+               ControllerName = m.ControllerName,
+               MenuName = m.MenuName,
+               Url = m.Url,
+               Icon = m.Icon,
+               ParentId = m.ParentId,
+               SeniorOrderNo = m.SeniorOrderNo,
+           }).FirstOrDefaultAsync();
 
-        public Task<ServiceResponse> UpdateAsync(string id, MenuRequest menuRequest)
+    public Task<ServiceResponse> UpdateAsync(string id, MenuRequest menuRequest)
         {
             throw new NotImplementedException();
         }

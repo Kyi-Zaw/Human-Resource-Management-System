@@ -43,5 +43,13 @@ namespace WebAPI.Controllers.Admin
             var result = await this.menus.GetAllAsync();
             return Ok(result);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetByID/{id}")]
+        public async Task<IActionResult> GetByID(string id)
+        {
+            var data = await menus.GetByIDAsync(id);
+            return Ok(data);
+        }
     }
 }
