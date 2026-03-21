@@ -1,5 +1,111 @@
-﻿<h3>Role</h3>
+﻿@page "/role"
+@using ApplicationLayer.DTOs
+@using ApplicationLayer.RequestModel.Admin
+@using ApplicationLayer.Services.Admin
+@using Web.WebComponent
+@inject IRole roleSerivce
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Role Entry</h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" @bind="@roleRequest.RoleName" />
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-success btn-sm" @onclick="Add">Save</button>
+                        <button class="btn btn-secondary btn-sm" @onclick="Cancel">Cancel</button>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <Paging TItem="RoleDto"
+                                Items="roleDtos"
+                                PageSize="5"
+                                ShowRowNumber="true"
+                                EnableSearch="true"
+                                ListingName="Role Listing"
+                                OnEdit="EditRole"
+                                OnDelete="DeleteRole"
+                                Columns="GridColumns">
+                        </Paging>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @code {
+
+    private RoleRequest roleRequest = new();
+    private RoleDto roleDto = new();
+    private List<RoleDto> roleDtos = new();
+
+    private List<ColumnDefinition<RoleDto>> GridColumns = new()
+    {
+        // new ColumnDefinition<EmployeeDto>
+        // {
+        //     Title = "ID",
+        //     PropertyName = nameof(EmployeeDto.EmployeeID),
+        //     CellTemplate = e => e.EmployeeID
+        // },
+        new ColumnDefinition<RoleDto>
+        {
+            Title = "Name",
+            PropertyName = nameof(RoleDto.RoleName),
+            CellTemplate = e => e.RoleName
+        },
+
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch employee list from API
+        roleDtos = await roleSerivce.GetAllAsync();
+    }
+
+
+
+    private async void Add()
+    {
+        var (flag, message) = await roleSerivce.AddAsync(roleRequest);
+        if (!flag)
+        {
+            await JS.InvokeVoidAsync("showAlert", "error", "Failed!", message);
+            return;
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("showAlert", "success", "Saved!", "Your data has been saved.");
+            roleDtos = await roleSerivce.GetAllAsync();
+            roleRequest = new();
+
+            StateHasChanged();
+        }
+    }
+
+    private void Cancel()
+    {
+        // Logic to clear the input fields
+    }
+
+    private async Task EditRole(RoleDto empdto)
+    {
+
+    }
+
+    private async Task DeleteRole(RoleDto empDto)
+    {
+
+    }
+
+
+
 
 }

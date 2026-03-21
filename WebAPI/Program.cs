@@ -75,7 +75,9 @@ builder.Services.AddScoped<IPostInfo, PostInfoRepository>();
 builder.Services.AddScoped<IEducation, EducationRepository>();
 builder.Services.AddScoped<IUserAccount, AccountRepository>();
 builder.Services.AddScoped<IRolePermission, RolePermissionRepository>();
-builder.Services.AddScoped<ApplicationLayer.IRepository.Admin.IMenu, MenuRepository>();
+builder.Services.AddScoped<IMenu, MenuRepository>();
+builder.Services.AddScoped<IRole, RoleRepository>();
+
 
 
 

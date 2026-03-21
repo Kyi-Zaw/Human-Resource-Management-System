@@ -36,6 +36,8 @@ builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 builder.Services.AddScoped<IUserAccount,AccountService>();
 builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
 builder.Services.AddScoped<ApplicationLayer.Services.Admin.IMenu, MenuService>();
+builder.Services.AddScoped<ApplicationLayer.Services.Admin.IRole, RoleService>();
+
 
 
 builder.Services.AddScoped<ToastService>();
