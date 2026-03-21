@@ -1,5 +1,5 @@
 ﻿using ApplicationLayer.DTOs;
-using ApplicationLayer.IRepository;
+using ApplicationLayer.IRepository.Admin;
 using ApplicationLayer.RequestModel;
 using InfrastructorLayer.Data;
 using Microsoft.AspNetCore.Identity;
@@ -12,13 +12,13 @@ using System.Text;
 using System.Threading.Tasks;
 using static ApplicationLayer.DTOs.Response;
 
-namespace InfrastructorLayer.Repository
+namespace InfrastructorLayer.Repository.Admin
 {
     public class AccountRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration config) : IUserAccount
     {
 
 
-        public async Task<Response.GrneralResponse> CreateAccount(UserRequest userDto)
+        public async Task<GrneralResponse> CreateAccount(UserRequest userDto)
         {
             if (userDto is null)
                 return new GrneralResponse(false, "User data is null");
@@ -90,8 +90,8 @@ namespace InfrastructorLayer.Repository
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
 
-            var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-            var key = System.Text.Encoding.ASCII.GetBytes(config["Jwt:Key"] ?? throw new InvalidOperationException("Jwt Key Not Found"));
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(config["Jwt:Key"] ?? throw new InvalidOperationException("Jwt Key Not Found"));
             var tokenDescriptor = new Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor
             {
                 Subject = new System.Security.Claims.ClaimsIdentity(new[]

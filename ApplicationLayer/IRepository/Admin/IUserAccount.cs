@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static ApplicationLayer.DTOs.Response;
 
-namespace ApplicationLayer.IRepository
+namespace ApplicationLayer.IRepository.Admin
 {
     public interface IUserAccount
     {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApplicationLayer.Services
+namespace ApplicationLayer.Services.Admin
 {
     public interface IMenu
     {

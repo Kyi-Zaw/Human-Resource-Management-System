@@ -1,6 +1,6 @@
 ﻿using ApplicationLayer.DTOs;
 using ApplicationLayer.GenericsModels;
-using ApplicationLayer.IRepository;
+using ApplicationLayer.IRepository.Admin;
 using ApplicationLayer.RequestModel;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using static ApplicationLayer.DTOs.Response;
 using static System.Net.WebRequestMethods;
 
-namespace ApplicationLayer.Services
+namespace ApplicationLayer.Services.Admin
 {
     public class AccountService(HttpClient httpClient) : IUserAccount
     {

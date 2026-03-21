@@ -1,4 +1,4 @@
-﻿using ApplicationLayer.IRepository;
+﻿using ApplicationLayer.IRepository.Admin;
 using ApplicationLayer.RequestModel;
 using ApplicationLayer.RequestModel.Admin;
 using Microsoft.AspNetCore.Authorization;
@@ -50,6 +50,14 @@ namespace WebAPI.Controllers.Admin
         {
             var data = await menus.GetByIDAsync(id);
             return Ok(data);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("UpdateAsync/{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody] MenuRequest menuRequest)
+        {
+            var result = await this.menus.UpdateAsync(id, menuRequest);
+            return Ok(result);
         }
     }
 }

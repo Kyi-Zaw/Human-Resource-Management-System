@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApplicationLayer.IRepository
+namespace ApplicationLayer.IRepository.Admin
 {
     public interface IMenu
     {

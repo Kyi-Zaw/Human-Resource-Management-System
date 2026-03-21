@@ -1,4 +1,4 @@
-﻿using ApplicationLayer.IRepository;
+﻿using ApplicationLayer.IRepository.Admin;
 using ApplicationLayer.RequestModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

@@ -1,5 +1,5 @@
 ﻿using ApplicationLayer.DTOs;
-using ApplicationLayer.IRepository;
+using ApplicationLayer.IRepository.Admin;
 using ApplicationLayer.RequestModel.Admin;
 using DomainLayer.Entities;
 using InfrastructorLayer.Data;
@@ -50,7 +50,7 @@ namespace InfrastructorLayer.Repository.Admin
                              join m in appDbContext.Menus
                                  on rp.MenuID equals m.MenuID
                              where rp.RoleName == roleName
-                             select m  
+                             select m
                          ).Select(rm => new MenuDto
                          {
                              MenuID = rm.MenuID,
@@ -114,7 +114,7 @@ namespace InfrastructorLayer.Repository.Admin
 
         public async Task<MenuDto> GetByIDAsync(string id) =>
            await appDbContext.Menus.Where(x => x.MenuID == id).Select(m => new MenuDto
-            {
+           {
                MenuID = m.MenuID,
                ControllerName = m.ControllerName,
                MenuName = m.MenuName,
@@ -124,9 +124,27 @@ namespace InfrastructorLayer.Repository.Admin
                SeniorOrderNo = m.SeniorOrderNo,
            }).FirstOrDefaultAsync();
 
-    public Task<ServiceResponse> UpdateAsync(string id, MenuRequest menuRequest)
+        public async Task<ServiceResponse> UpdateAsync(string id, MenuRequest menuRequest)
         {
-            throw new NotImplementedException();
+            var data = await appDbContext.Menus.FirstOrDefaultAsync(x => x.MenuID == id);
+
+            if (data == null)
+                return new ServiceResponse(false, "Menus not found");
+
+            data.MenuID= id;
+            data.MenuName = menuRequest.MenuName;
+            data.ControllerName = menuRequest.ControllerName;
+            data.Url = menuRequest.Url;
+            data.Icon = menuRequest.Icon;
+            data.ParentId = menuRequest.Parent;
+            data.SeniorOrderNo = menuRequest.OrderNo;
+          
+
+            appDbContext.Menus.Update(data);
+
+            await SaveChangesAsync();
+
+            return new ServiceResponse(true, "Updated Successful");
         }
 
         private async Task SaveChangesAsync() => await appDbContext.SaveChangesAsync();

@@ -1,5 +1,5 @@
 ﻿using ApplicationLayer.DTOs;
-using ApplicationLayer.IRepository;
+using ApplicationLayer.IRepository.Admin;
 using ApplicationLayer.RequestModel;
 using DomainLayer.Entities;
 using InfrastructorLayer.Data;
@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InfrastructorLayer.Repository
+namespace InfrastructorLayer.Repository.Admin
 {
     public class RolePermissionRepository : IRolePermission 
     {

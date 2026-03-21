@@ -8,7 +8,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApplicationLayer.Services
+namespace ApplicationLayer.Services.Admin
 {
     public class RolePermissionService : IRolePermissionService
     {

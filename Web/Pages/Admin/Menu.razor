@@ -1,7 +1,7 @@
 ﻿@page "/menu"
 @using ApplicationLayer.DTOs
 @using ApplicationLayer.RequestModel.Admin
-@using ApplicationLayer.Services
+@using ApplicationLayer.Services.Admin
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Web.WebComponent
@@ -23,7 +23,7 @@
             </div>
             <div class="card-footer">
                 <button class="btn btn-primary mt-2" @onclick="AddParentClick">AddParent </button>
-                <button class="btn btn-primary mt-2" @onclick="AddChildClick">AddChild </button>
+                <button class="btn btn-success mt-2" @onclick="AddChildClick">AddChild </button>
             </div>
         </div>
 
@@ -70,7 +70,8 @@
                 </div>
 
                 <div class="card-footer">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-warning">Save</button>
+                    <button class="btn btn-secondary" @onclick=ClearControl>Cancel</button>
                 </div>
             </EditForm>
         </div>
@@ -84,6 +85,7 @@
 
     List<TreeNode> treeNodes = new();
     string parentID = "";
+    string menuID = string.Empty;
     MenuRequest menuRequest = new MenuRequest();
 
 
@@ -97,6 +99,7 @@
     async void OnSelectedNodeClick(TreeNode node)
     {
         parentID = node.ID;
+        menuID = node.ID;
         var menu = await menus.GetByIDAsync(node.ID);
         menuRequest.MenuName = menu.MenuName;
         menuRequest.ControllerName = menu.ControllerName;
@@ -110,30 +113,60 @@
     void AddParentClick()
     {
         parentID = string.Empty;
+        menuID = string.Empty;
     }
 
     void AddChildClick()
     {
         menuRequest = new();
         menuRequest.Parent = parentID;
+        menuID = string.Empty;
 
     }
 
-    void ClearControl()
+    private void ClearControl()
     {
         menuRequest = new MenuRequest();
+        menuID = string.Empty;
+        parentID = string.Empty;
     }
+
+   
 
     async Task HandleSubmit()
     {
+        if (menuID != string.Empty)
+        {
+            var (flag, message) = await menus.UpdateAsync(menuID, menuRequest);
+            if (flag)
+            {
+                var menu = await menus.GetAllAsync();
+                treeNodes = MapToTreeNode(menu);
+                ClearControl();
+                await JS.InvokeVoidAsync("showAlert", "success", "Updated!", "Menu updated successfully.");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("showAlert", "error", "Failed!", message);
+            }
+        }
+        else
+        {
+            var (flag, message) = await menus.AddAsync(menuRequest);
 
-        await menus.AddAsync(menuRequest);
+            if (flag)
+            {
+                var menu = await menus.GetAllAsync();
+                treeNodes = MapToTreeNode(menu);
+                ClearControl();
+                await JS.InvokeVoidAsync("showAlert", "success", "Save!", "Menu Save successfully.");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("showAlert", "error", "Failed!", message);
+            }
 
-        var menu = await menus.GetAllAsync();
-        treeNodes = MapToTreeNode(menu);
-
-        // clear form
-        menuRequest = new MenuRequest();
+        }     
     }
 
 

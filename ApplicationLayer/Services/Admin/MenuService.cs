@@ -8,7 +8,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApplicationLayer.Services
+namespace ApplicationLayer.Services.Admin
 {
     public class MenuService : IMenu
     {
@@ -46,9 +46,11 @@ namespace ApplicationLayer.Services
            return await httpClient.GetFromJsonAsync<MenuDto>($"api/menu/getbyid/{id}")!;
         }
 
-        public Task<ServiceResponse> UpdateAsync(string id, MenuRequest rolePermissionRequest)
+        public async Task<ServiceResponse> UpdateAsync(string id, MenuRequest menuRequest)
         {
-            throw new NotImplementedException();
+            var data = await httpClient.PutAsJsonAsync($"api/menu/updateasync/{id}", menuRequest);
+            var response = await data.Content.ReadFromJsonAsync<ServiceResponse>();
+            return response!;
         }
     }
 }
