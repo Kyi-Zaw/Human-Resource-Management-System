@@ -19,7 +19,7 @@ namespace WebAPI.Controllers.Admin
             this.menus = menus;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "ControllerAccess")]
         [HttpPost("Add")]
         public async Task<IActionResult> Add([FromBody] MenuRequest menusRequest)
         {
@@ -36,7 +36,7 @@ namespace WebAPI.Controllers.Admin
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "ControllerAccess")]
         [HttpGet("GetAllAsync")]
         public async Task<IActionResult> GetAllAsync()
         {
@@ -44,7 +44,7 @@ namespace WebAPI.Controllers.Admin
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "ControllerAccess")]
         [HttpGet("GetByID/{id}")]
         public async Task<IActionResult> GetByID(string id)
         {
@@ -52,7 +52,7 @@ namespace WebAPI.Controllers.Admin
             return Ok(data);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "ControllerAccess")]
         [HttpPut("UpdateAsync/{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] MenuRequest menuRequest)
         {

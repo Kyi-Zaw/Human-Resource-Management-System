@@ -16,6 +16,8 @@ namespace DomainLayer.Entities
 
         public string RoleName { get; set; }
 
+        public string RoleID { get; set; }
+
         public string MenuID { get; set; }
       
         public bool IsAllowed { get; set; }

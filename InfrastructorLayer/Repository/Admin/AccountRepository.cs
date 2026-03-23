@@ -78,10 +78,12 @@ namespace InfrastructorLayer.Repository.Admin
                 return new LoginResponse(false, "", "Invalid password");
 
             var getUserRole = await userManager.GetRolesAsync(user);
-            var userSession = new UserSession(user.Id, user.Name, user.Email, getUserRole.First());
+            var role = await roleManager.FindByNameAsync(getUserRole.First());
+
+            var userSession = new UserSession(user.Id, user.Name, user.Email , role.Id);
 
 
-            string token = GenerateJwtToken(user, getUserRole.FirstOrDefault() ?? getUserRole.First());
+            string token = GenerateJwtToken(user, role.Id );
             return new LoginResponse(true, token, "Login Success");
         }
 

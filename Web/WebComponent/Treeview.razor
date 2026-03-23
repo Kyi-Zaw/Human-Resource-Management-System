@@ -18,7 +18,8 @@
                     <span class="toggle-empty"></span>
                 }
                 @if(@IsShowCheckBox){
-                <input type="checkbox" @bind="node.IsChecked" />
+
+                    <input type="checkbox" checked="@node.IsChecked" @onchange="(e) => OnCheckChanged(node, e)"/>
 
                 }
                 <span style="cursor:pointer" class="desc @(node.IsSelected ? "selected" : "")"
@@ -27,7 +28,7 @@
 
             @if (node.IsExpanded && node.Children.Any())
             {
-                <Treeview Nodes="node.Children" ShowSelectButton=false IsShowCheckBox=false OnNodeSelected="OnNodeClick" />
+                <Treeview Nodes="node.Children" ShowSelectButton=false IsShowCheckBox=@IsShowCheckBox OnNodeSelected="OnNodeClick" />
             }
         </li>
     }
@@ -164,6 +165,29 @@
 
             if (n.Children != null && n.Children.Any())
                 ClearSelection(n.Children);
+        }
+    }
+
+    void OnCheckChanged(TreeNode node, ChangeEventArgs e)
+    {
+        bool isChecked = (bool)e.Value;
+
+        node.IsChecked = isChecked;
+
+        // 👉 child တွေကို propagate လုပ်မယ်
+        CheckAllChildren(node, isChecked);
+    }
+
+    void CheckAllChildren(TreeNode node, bool isChecked)
+    {
+        if (node.Children == null) return;
+
+        foreach (var child in node.Children)
+        {
+            child.IsChecked = isChecked;
+
+            // recursive
+            CheckAllChildren(child, isChecked);
         }
     }
 

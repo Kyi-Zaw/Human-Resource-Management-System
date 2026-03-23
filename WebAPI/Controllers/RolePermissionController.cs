@@ -18,7 +18,6 @@ namespace WebAPI.Controllers
             this.rolePermission = rolePermission;
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost("Add")]
         public async Task<IActionResult> Add([FromBody] RolePermissionRequest rolePermissionRequest)
         {
@@ -26,7 +25,6 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("GetAllAsyncByRole")]
         public async Task<IActionResult> GetAllAsyncByRole()
         {
@@ -36,7 +34,6 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("GetAllAsync")]
         public async Task<IActionResult> GetAllAsync()
         {

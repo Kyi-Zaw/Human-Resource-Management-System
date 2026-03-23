@@ -9,6 +9,9 @@ namespace ApplicationLayer.RequestModel
 {
     public class RolePermissionRequest
     {
+        [Required(ErrorMessage = "RoleID is required")]
+        public string RoleID { get; set; }
+
         [Required(ErrorMessage = "RoleName is required")]
         public string RoleName { get; set; }
 

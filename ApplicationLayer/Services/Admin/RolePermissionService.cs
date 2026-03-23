@@ -18,9 +18,11 @@ namespace ApplicationLayer.Services.Admin
         {
             this.httpClient = httpClient.CreateClient("API");
         }
-        public Task<ServiceResponse> AddAsync(RolePermissionRequest rolePermissionRequest)
+        public async Task<ServiceResponse> AddAsync(RolePermissionRequest rolePermissionRequest)
         {
-            throw new NotImplementedException();
+            var data = await httpClient.PostAsJsonAsync("api/rolepermission/add", rolePermissionRequest);
+            var response = await data.Content.ReadFromJsonAsync<ServiceResponse>();
+            return response!;
         }
 
         public Task<ServiceResponse> DeleteAsync(string id)

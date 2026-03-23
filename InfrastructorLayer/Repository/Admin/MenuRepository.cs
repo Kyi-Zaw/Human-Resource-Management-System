@@ -42,14 +42,14 @@ namespace InfrastructorLayer.Repository.Admin
             throw new NotImplementedException();
         }
 
-        public async Task<List<MenuDto>> GetAllAsyncByRole(string roleName)
+        public async Task<List<MenuDto>> GetAllAsyncByRole(string roleID)
         {
 
             var menus = await (
                              from rp in appDbContext.RolePermissions
                              join m in appDbContext.Menus
                                  on rp.MenuID equals m.MenuID
-                             where rp.RoleName == roleName
+                             where rp.RoleID == roleID
                              select m
                          ).Select(rm => new MenuDto
                          {

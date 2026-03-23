@@ -18,7 +18,7 @@ namespace ApplicationLayer.IRepository.Admin
 
         Task<List<RolePermissionDto>> GetAllAsync();
 
-        Task<List<RolePermissionDto>> GetAllAsyncByRole(string? roleName);
+        Task<List<RolePermissionDto>> GetAllAsyncByRole(string? roleID);
         Task<RolePermissionDto> GetByIDAsync(string id);
     }
 }

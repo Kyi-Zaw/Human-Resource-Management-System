@@ -51,7 +51,7 @@ namespace Web.Api.Authorization
                                     from rp in _context.RolePermissions
                                     join m in _context.Menus
                                         on rp.MenuID equals m.MenuID
-                                    where rp.RoleName == roleID
+                                    where rp.RoleID == roleID
                                        && m.ControllerName == controllerName  
                                     select new
                                     {

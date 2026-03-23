@@ -29,6 +29,7 @@ namespace InfrastructorLayer.Repository.Admin
             {
                 RolePermissionID = Guid.NewGuid().ToString().ToUpper(),
                 MenuID = rolePermissionRequest.MenuID,        
+                RoleID = rolePermissionRequest.RoleID,
                 RoleName = rolePermissionRequest.RoleName,
                 IsAllowed = rolePermissionRequest.IsAllowed,
             };
@@ -43,14 +44,15 @@ namespace InfrastructorLayer.Repository.Admin
             throw new NotImplementedException();
         }
 
-        public async Task<List<RolePermissionDto>> GetAllAsyncByRole(string roleName)
+        public async Task<List<RolePermissionDto>> GetAllAsyncByRole(string roleID)
         {
 
             var menus = await appDbContext.RolePermissions
-                .Where(rm => rm.RoleName == roleName)    
+                .Where(rm => rm.RoleID == roleID)    
                 .Select(rm => new RolePermissionDto
                 {
                     RolePermissionID = rm.RolePermissionID,
+                    RoleID = rm.RoleID,
                     RoleName = rm.RoleName,
                     MenuID = rm.MenuID,
                     IsAllowed = rm.IsAllowed,
@@ -68,6 +70,7 @@ namespace InfrastructorLayer.Repository.Admin
                 .Select(rm => new RolePermissionDto
                 {
                     RolePermissionID = rm.RolePermissionID,
+                    RoleID = rm.RoleID,
                     RoleName = rm.RoleName,
                     MenuID = rm.MenuID,
                     IsAllowed = rm.IsAllowed,

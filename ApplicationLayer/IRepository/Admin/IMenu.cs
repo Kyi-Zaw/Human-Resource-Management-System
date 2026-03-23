@@ -17,7 +17,7 @@ namespace ApplicationLayer.IRepository.Admin
 
         Task<List<MenuDto>> GetAllAsync();
 
-        Task<List<MenuDto>> GetAllAsyncByRole(string? roleName);
+        Task<List<MenuDto>> GetAllAsyncByRole(string? roleID);
         Task<MenuDto> GetByIDAsync(string id);
     }
 }
