@@ -28,16 +28,17 @@
 
             @if (node.IsExpanded && node.Children.Any())
             {
-                <Treeview Nodes="node.Children" ShowSelectButton=false IsShowCheckBox=@IsShowCheckBox OnNodeSelected="OnNodeClick" />
+                <Treeview Nodes="node.Children" IsShowCheckBox=@IsShowCheckBox IsRoot=false OnNodeSelected="OnNodeClick" />
+
             }
         </li>
     }
 </ul>
 
-@if (ShowSelectButton && IsShowCheckBox)
+@if (IsShowCheckBox && IsRoot)
 {
     <button class="btn btn-primary mt-2" @onclick="OnOkClick">
-        select
+        @ButtonName
     </button>
 }
 
@@ -113,10 +114,13 @@
     public EventCallback<TreeNode> OnNodeSelected { get; set; }
 
     [Parameter]
-    public bool ShowSelectButton { get; set; }
+    public bool IsShowCheckBox { get; set; }
 
     [Parameter]
-    public bool IsShowCheckBox { get; set; }
+    public bool IsRoot { get; set; } = true;
+
+    [Parameter]
+    public string ButtonName { get; set; } = "OK";
 
     TreeNode? SelectedNode;
 

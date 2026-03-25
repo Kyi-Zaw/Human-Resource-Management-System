@@ -6,8 +6,6 @@
 @using Microsoft.AspNetCore.Authorization
 @using Web.WebComponent
 @inject IRole roleSerivce
-@inject IMenu menus
-@inject IRolePermissionService rolePermissionService
 
 @attribute [Authorize]
 
@@ -48,19 +46,7 @@
     </div>
 
 
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Menu Listing</h3>
-            </div>
-            <div class="card-body">
-                <input type="text" class="form-control" @bind="@RoleName" disabled="true"/> <br />
-                <Treeview Nodes="treeNodes" ShowSelectButton=true IsShowCheckBox=true OnOk="OnNodeClick" />
-            </div>
-        </div>
 
-
-    </div>
 
 
 </div>
@@ -69,9 +55,6 @@
 @code {
 
     List<TreeNode> treeNodes = new();
-    string RoleID = string.Empty;
-    string RoleName = string.Empty;
-
 
     private RoleRequest roleRequest = new();
     private RoleDto roleDto = new();
@@ -88,41 +71,11 @@
 
     };
 
-    private async void OnNodeClick(List<TreeNode> treeNodes)
-    {
-
-        foreach (var item in treeNodes)
-        {
-            RolePermissionRequest rolePermissionRequest = new RolePermissionRequest();
-            rolePermissionRequest.RoleID = RoleID;
-            rolePermissionRequest.MenuID = item.ID;
-            rolePermissionRequest.RoleName = RoleName;
-            rolePermissionRequest.IsAllowed = true;
-
-            var (flag, message) = await rolePermissionService.AddAsync(rolePermissionRequest);
-            if (!flag)
-            {
-                await JS.InvokeVoidAsync("showAlert", "error", "Failed!", message);
-                return;
-            }
-            else
-            {
-                await JS.InvokeVoidAsync("showAlert", "success", "Saved!", "Your data has been saved.");
-                roleDtos = await roleSerivce.GetAllAsync();
-                roleRequest = new();
-
-                StateHasChanged();
-            }
-            
-        }
-    }
+    
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch employee list from API
         roleDtos = await roleSerivce.GetAllAsync();
-        var menu = await menus.GetAllAsync();
-        treeNodes = MapToTreeNode(menu);
     }
 
 
@@ -147,7 +100,6 @@
 
     private void Cancel()
     {
-        // Logic to clear the input fields
     }
 
     private async Task EditRole(RoleDto roleDto)
@@ -157,27 +109,11 @@
 
     private async Task Detail(RoleDto roleDto)
     {
-        RoleID = roleDto.RoleID;
-        RoleName = roleDto.RoleName;
     }
 
     private async Task DeleteRole(RoleDto roleDto)
     {
 
-    }
-
-    List<TreeNode> MapToTreeNode(List<MenuDto> menus)
-    {
-        return menus.Select(menu => new TreeNode
-        {
-            ID = menu.MenuID,
-            Code = menu.ControllerName,
-            Description = menu.MenuName,
-            ParentID = menu.ParentId,
-            Children = menu.Children != null && menu.Children.Any()
-                ? MapToTreeNode(menu.Children)
-                : new List<TreeNode>()
-        }).ToList();
     }
 
 

@@ -34,6 +34,8 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
+
+
         [HttpGet("GetAllAsync")]
         public async Task<IActionResult> GetAllAsync()
         {
