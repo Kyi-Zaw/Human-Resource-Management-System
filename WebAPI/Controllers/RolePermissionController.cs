@@ -25,12 +25,11 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetAllAsyncByRole")]
-        public async Task<IActionResult> GetAllAsyncByRole()
+        [HttpGet("GetAllAsyncByRole/{roleID}")]
+        public async Task<IActionResult> GetAllAsyncByRole(string roleID)
         {
-            var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
-            var result = await this.rolePermission.GetAllAsyncByRole(role);
+            var result = await this.rolePermission.GetAllAsyncByRole(roleID);
             return Ok(result);
         }
 

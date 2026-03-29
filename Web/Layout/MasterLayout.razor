@@ -127,11 +127,10 @@
             </li>
             <li class="nav-item">
 
-
-                <button class="logout-btn-gradient" @onclick="HandleLogout">
+                <a class="nav-link" data-toggle="dropdown" @onclick="HandleLogout">
                     <i class="fas fa-sign-out-alt me-2"></i>
-                    Logout
-                </button>
+                </a>
+              
 
 
 
@@ -153,7 +152,7 @@
                     <img src="AdminLTE/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
                 </div>
                 <div class="info">
-                    <a href="#" class="d-block">Alexander Pierce</a>
+                    <a href="/user-profile" class="d-block">Alexander Pierce</a>
                 </div>
             </div>
 

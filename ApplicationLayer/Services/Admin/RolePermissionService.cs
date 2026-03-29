@@ -30,9 +30,9 @@ namespace ApplicationLayer.Services.Admin
             throw new NotImplementedException();
         }
 
-        public async Task<List<RolePermissionDto>> GetAllAsyncByRole()
+        public async Task<List<RolePermissionDto>> GetAllAsyncByRole(string roleID)
         {
-           return await httpClient.GetFromJsonAsync<List<RolePermissionDto>>("api/rolepermission/getallasyncbyrole")!;
+           return await httpClient.GetFromJsonAsync<List<RolePermissionDto>>($"api/rolepermission/getallasyncbyrole/{roleID}")!;
         }
 
         public async Task<List<RolePermissionDto>> GetAllAsync()

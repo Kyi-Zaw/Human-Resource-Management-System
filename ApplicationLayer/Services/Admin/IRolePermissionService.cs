@@ -15,7 +15,7 @@ namespace ApplicationLayer.Services.Admin
 
         Task<ServiceResponse> DeleteAsync(string id);
 
-        Task<List<RolePermissionDto>> GetAllAsyncByRole();
+        Task<List<RolePermissionDto>> GetAllAsyncByRole(string roleID);
 
         Task<List<RolePermissionDto>> GetAllAsync();
         Task<RolePermissionDto> GetByIDAsync(string id);

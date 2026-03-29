@@ -27,10 +27,9 @@
                                 ShowRowNumber="true"
                                 EnableSearch="true"
                                 ListingName="Role Listing"
-                                OnDetail = "Detail"
-                             
+                                OnDetail="Detail"
                                 Columns="GridColumns">
-                                
+
                         </Paging>
                     </div>
                 </div>
@@ -45,8 +44,8 @@
                 <h3 class="card-title">Role Permission Detail</h3>
             </div>
             <div class="card-body">
-                <input type="text" class="form-control" @bind="@RoleName" disabled="true"/> <br />
-                <Treeview Nodes="treeNodes" IsShowCheckBox=true IsRoot=true OnOk="OnNodeClick" ButtonName="Save"/>
+                <input type="text" class="form-control" @bind="@RoleName" disabled="true" /> <br />
+                <Treeview Nodes="treeNodes" IsShowCheckBox=true IsRoot=true OnOk="OnNodeClick" ButtonName="Save" />
             </div>
         </div>
 
@@ -56,7 +55,7 @@
 
 </div>
 
-@code{
+@code {
 
     List<TreeNode> treeNodes = new();
     string RoleID = string.Empty;
@@ -115,6 +114,15 @@
     {
         RoleID = roleDto.RoleID;
         RoleName = roleDto.RoleName;
+
+        var rolePermissionss = await rolePermissionService.GetAllAsyncByRole(RoleID);
+        var menu = await menus.GetAllAsync();
+
+
+
+        treeNodes = MapToTreeNode(menu, rolePermissionss.Where(x => x.IsAllowed)
+        .Select(x => x.MenuID)
+        .ToHashSet());
     }
 
     List<TreeNode> MapToTreeNode(List<MenuDto> menus)
@@ -126,9 +134,30 @@
                 Description = menu.MenuName,
                 ParentID = menu.ParentId,
                 Children = menu.Children != null && menu.Children.Any()
-                    ? MapToTreeNode(menu.Children)
+                        ? MapToTreeNode(menu.Children)
+                        : new List<TreeNode>()
+            }).ToList();
+    }
+
+
+    List<TreeNode> MapToTreeNode(List<MenuDto> menus, HashSet<string> roleMenuSet)
+    {
+        return menus.Select(menu => new TreeNode
+            {
+                ID = menu.MenuID,
+                Code = menu.ControllerName,
+                Description = menu.MenuName,
+                ParentID = menu.ParentId,
+
+                // ✅ check logic
+                IsChecked = roleMenuSet.Contains(menu.MenuID),
+
+                // ✅ recursive children
+                Children = menu.Children != null && menu.Children.Any()
+                    ? MapToTreeNode(menu.Children, roleMenuSet)
                     : new List<TreeNode>()
             }).ToList();
     }
+}
 
 }

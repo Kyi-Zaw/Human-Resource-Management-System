@@ -1,0 +1,116 @@
+﻿@page "/user-profile"
+@using ApplicationLayer.DTOs
+
+<div class="container mt-4">
+    <div class="row">
+
+        <!-- LEFT SIDE -->
+        <div class="col-md-4">
+            <div class="card p-3 text-center">
+                <img src="https://i.pravatar.cc/100" class="rounded-circle mx-auto mb-2" width="80" />
+
+                <h5>@User.Email</h5>
+                <small class="text-muted">Last sign in 4 minutes ago</small>
+
+                <div class="mt-2">
+                    <span class="badge bg-light text-dark">User ID: @User.EmployeeID</span>
+                </div>
+
+                <hr />
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-secondary btn-sm">Impersonate User</button>
+                    <button class="btn btn-outline-primary btn-sm">Change Password</button>
+                    <button class="btn btn-outline-warning btn-sm">Unban User</button>
+                    <button class="btn btn-outline-danger btn-sm">Delete User</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="col-md-8">
+
+            <!-- Personal Info -->
+            <div class="card p-3 mb-3">
+                <h5>Personal Information</h5>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>First Name</label>
+                        <input class="form-control" value="@User.FirstName" readonly />
+                    </div>
+                    <div class="col-md-6">
+                        <label>Last Name</label>
+                        <input class="form-control" value="@User.LastName" readonly />
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <label>Email</label>
+                    <div class="input-group">
+                        <input class="form-control" value="@User.Email" readonly />
+                        <span class="input-group-text text-success">Verified</span>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <label>Phone</label>
+                    <div class="input-group">
+                        <input class="form-control" value="@User.Phone" readonly />
+                        <span class="input-group-text text-success">Verified</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Media -->
+            <div class="card p-3 mb-3">
+                <h5>Social Media Account</h5>
+
+                <div class="mb-2">
+                    <label>Facebook</label>
+                    <input class="form-control" value="@User.Facebook" readonly />
+                </div>
+
+                <div class="mb-2">
+                    <label>Instagram</label>
+                    <input class="form-control" value="@User.Instagram" readonly />
+                </div>
+
+                <button class="btn btn-primary btn-sm">+ Add Social Media</button>
+            </div>
+
+            <!-- Other -->
+            <div class="card p-3">
+                <h5>Other</h5>
+
+                <div class="mb-2">
+                    <label>Web3 Wallets</label>
+                    <input class="form-control" value="@User.Website" readonly />
+                </div>
+
+                <div class="mb-2">
+                    <label>Enterprise Account</label>
+                    <input class="form-control" value="@User.Enterprise" readonly />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    EmployeeDto User = new()
+        {
+            EmployeeID = "user_fjoeu17n78fgh",
+            FirstName = "Cameron",
+            LastName = "Williamson",
+            Email = "cameronwilliamson@hotmail.com",
+            Phone = "(629) 555-0129",
+            Facebook = "https://facebook.com/comeronw",
+            Instagram = "https://instagram.com/comeronw",
+            Website = "https://wpshout.com",
+            Enterprise = "https://www.company.com"
+        };
+
+  
+}
