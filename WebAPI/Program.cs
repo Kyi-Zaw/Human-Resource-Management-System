@@ -1,14 +1,10 @@
-using ApplicationLayer.IRepository;
-using ApplicationLayer.IRepository.Admin;
 using InfrastructorLayer.Data;
-using InfrastructorLayer.Repository;
-using InfrastructorLayer.Repository.Admin;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using Web.Api.Authorization;
+using WebAPI.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,18 +62,18 @@ builder.Services.AddAuthorization(options =>
         policy.Requirements.Add(new ControllerAccessRequirement()) );
 });
 
-builder.Services.AddScoped<IAuthorizationHandler, ControllerAccessHandler>();
+//builder.Services.AddScoped<IAuthorizationHandler, ControllerAccessHandler>();
+//builder.Services.AddScoped<IEmployeeInfo, EmployeeRepository>();
+//builder.Services.AddScoped<IPostInfo, PostInfoRepository>();
+//builder.Services.AddScoped<IEducation, EducationRepository>();
+//builder.Services.AddScoped<IUserAccount, AccountRepository>();
+//builder.Services.AddScoped<IRolePermission, RolePermissionRepository>();
+//builder.Services.AddScoped<IMenu, MenuRepository>();
+//builder.Services.AddScoped<IRole, RoleRepository>();
 
-
-
-builder.Services.AddScoped<IEmployeeInfo, EmployeeRepository>();
-builder.Services.AddScoped<IPostInfo, PostInfoRepository>();
-builder.Services.AddScoped<IEducation, EducationRepository>();
-builder.Services.AddScoped<IUserAccount, AccountRepository>();
-builder.Services.AddScoped<IRolePermission, RolePermissionRepository>();
-builder.Services.AddScoped<IMenu, MenuRepository>();
-builder.Services.AddScoped<IRole, RoleRepository>();
-
+builder.Services
+    .AddAuthorizationServices()
+    .AddRepositories();
 
 
 

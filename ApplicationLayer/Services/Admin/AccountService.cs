@@ -1,15 +1,6 @@
-﻿using ApplicationLayer.DTOs;
-using ApplicationLayer.GenericsModels;
-using ApplicationLayer.IRepository.Admin;
+﻿using ApplicationLayer.GenericsModels;
 using ApplicationLayer.RequestModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 using static ApplicationLayer.DTOs.Response;
-using static System.Net.WebRequestMethods;
 
 namespace ApplicationLayer.Services.Admin
 {

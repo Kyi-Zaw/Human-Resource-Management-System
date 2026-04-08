@@ -1,6 +1,4 @@
-using ApplicationLayer.IRepository.Admin;
-using ApplicationLayer.Services;
-using ApplicationLayer.Services.Admin;
+
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -8,6 +6,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using NetcodeHub.Packages.Components.Toast;
 using Web;
 using Web.Authentication;
+using Web.DependencyInjection;
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -30,14 +29,16 @@ builder.Services.AddHttpClient("API", client =>
 })
 .AddHttpMessageHandler<JwtHandler>();
 
-builder.Services.AddScoped<IEmployeeService,EmployeeService>();
-builder.Services.AddScoped<IPostInfoService, PostInfoService>();
-builder.Services.AddScoped<IFileUploadService, FileUploadService>();
-builder.Services.AddScoped<IUserAccount,AccountService>();
-builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
-builder.Services.AddScoped<ApplicationLayer.Services.Admin.IMenu, MenuService>();
-builder.Services.AddScoped<ApplicationLayer.Services.Admin.IRole, RoleService>();
+//builder.Services.AddScoped<IEmployeeService,EmployeeService>();
+//builder.Services.AddScoped<IPostInfoService, PostInfoService>();
+//builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+//builder.Services.AddScoped<IUserAccount,AccountService>();
+//builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
+//builder.Services.AddScoped<IMenu, MenuService>();
+//builder.Services.AddScoped<IRole, RoleService>();
 
+builder.Services
+    .AddApplicationServices();
 
 
 builder.Services.AddScoped<ToastService>();
