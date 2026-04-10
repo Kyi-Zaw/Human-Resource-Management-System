@@ -62,14 +62,6 @@ builder.Services.AddAuthorization(options =>
         policy.Requirements.Add(new ControllerAccessRequirement()) );
 });
 
-//builder.Services.AddScoped<IAuthorizationHandler, ControllerAccessHandler>();
-//builder.Services.AddScoped<IEmployeeInfo, EmployeeRepository>();
-//builder.Services.AddScoped<IPostInfo, PostInfoRepository>();
-//builder.Services.AddScoped<IEducation, EducationRepository>();
-//builder.Services.AddScoped<IUserAccount, AccountRepository>();
-//builder.Services.AddScoped<IRolePermission, RolePermissionRepository>();
-//builder.Services.AddScoped<IMenu, MenuRepository>();
-//builder.Services.AddScoped<IRole, RoleRepository>();
 
 builder.Services
     .AddAuthorizationServices()

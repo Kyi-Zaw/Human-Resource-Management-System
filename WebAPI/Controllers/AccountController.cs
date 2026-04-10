@@ -17,7 +17,6 @@ namespace WebAPI.Controllers
             _userAccount = userAccount;
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost("CreateAccount")]
         public async Task<IActionResult> CreateAccount([FromBody] UserRequest userDto)
         {

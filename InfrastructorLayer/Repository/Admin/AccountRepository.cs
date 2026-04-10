@@ -57,6 +57,11 @@ namespace InfrastructorLayer.Repository.Admin
                     return new GrneralResponse(true, "Account Created");
 
                 }
+                else
+                {
+                    await userManager.AddToRoleAsync(newUser, "User");
+                    return new GrneralResponse(true, "Account Created");
+                }
             }
 
             return new GrneralResponse(true, "Account Created");
